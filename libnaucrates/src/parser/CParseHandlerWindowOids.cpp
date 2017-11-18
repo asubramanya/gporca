@@ -3,7 +3,7 @@
 //	Copyright (C) 2017 Pivotal Software, Inc.
 //
 //	@filename:
-//		CParseHandlerDefaultOids.cpp
+//		CParseHandlerWindowOids.cpp
 //
 //	@doc:
 //		Implementation of the SAX parse handler class for parsing default oids
@@ -11,7 +11,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerManager.h"
 #include "naucrates/dxl/parser/CParseHandlerFactory.h"
-#include "naucrates/dxl/parser/CParseHandlerDefaultOids.h"
+#include "naucrates/dxl/parser/CParseHandlerWindowOids.h"
 
 #include "naucrates/dxl/operators/CDXLOperatorFactory.h"
 
@@ -22,7 +22,7 @@ using namespace gpopt;
 
 XERCES_CPP_NAMESPACE_USE
 
-CParseHandlerDefaultOids::CParseHandlerDefaultOids
+CParseHandlerWindowOids::CParseHandlerWindowOids
 	(
 	IMemoryPool *pmp,
 	CParseHandlerManager *pphm,
@@ -30,17 +30,17 @@ CParseHandlerDefaultOids::CParseHandlerDefaultOids
 	)
 	:
 	CParseHandlerBase(pmp, pphm, pphRoot),
-	m_pdefoids(NULL)
+	m_pwindowoids(NULL)
 {
 }
 
-CParseHandlerDefaultOids::~CParseHandlerDefaultOids()
+CParseHandlerWindowOids::~CParseHandlerWindowOids()
 {
-	CRefCount::SafeRelease(m_pdefoids);
+	CRefCount::SafeRelease(m_pwindowoids);
 }
 
 void
-CParseHandlerDefaultOids::StartElement
+CParseHandlerWindowOids::StartElement
 	(
 	const XMLCh* const , //xmlszUri,
 	const XMLCh* const xmlszLocalname,
@@ -48,35 +48,35 @@ CParseHandlerDefaultOids::StartElement
 	const Attributes& attrs
 	)
 {
-	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenDefaultOids), xmlszLocalname))
+	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowOids), xmlszLocalname))
 	{
 		CWStringDynamic *pstr = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszLocalname);
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, pstr->Wsz());
 	}
 
 	// parse default oids
-	OID oidRowNumber = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRowNumber, EdxltokenDefaultOids);
-	OID oidRank = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRank, EdxltokenDefaultOids);
+	OID oidRowNumber = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRowNumber, EdxltokenWindowOids);
+	OID oidRank = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRank, EdxltokenWindowOids);
 
-	m_pdefoids = GPOS_NEW(m_pmp) CDefaultOids(oidRowNumber, oidRank);
+	m_pwindowoids = GPOS_NEW(m_pmp) CWindowOids(oidRowNumber, oidRank);
 }
 
 // invoked by Xerces to process a closing tag
 void
-CParseHandlerDefaultOids::EndElement
+CParseHandlerWindowOids::EndElement
 	(
 	const XMLCh* const, // xmlszUri,
 	const XMLCh* const xmlszLocalname,
 	const XMLCh* const // xmlszQname
 	)
 {
-	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenDefaultOids), xmlszLocalname))
+	if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowOids), xmlszLocalname))
 	{
 		CWStringDynamic *pstr = CDXLUtils::PstrFromXMLCh(m_pphm->Pmm(), xmlszLocalname);
 		GPOS_RAISE( gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, pstr->Wsz());
 	}
 
-	GPOS_ASSERT(NULL != m_pdefoids);
+	GPOS_ASSERT(NULL != m_pwindowoids);
 	GPOS_ASSERT(0 == this->UlLength());
 
 	// deactivate handler
@@ -85,15 +85,15 @@ CParseHandlerDefaultOids::EndElement
 
 // return the type of the parse handler.
 EDxlParseHandlerType
-CParseHandlerDefaultOids::Edxlphtype() const
+CParseHandlerWindowOids::Edxlphtype() const
 {
-	return EdxlphDefaultOids;
+	return EdxlphWindowOids;
 }
 
-CDefaultOids *
-CParseHandlerDefaultOids::Pdefoids() const
+CWindowOids *
+CParseHandlerWindowOids::Pwindowoids() const
 {
-	return m_pdefoids;
+	return m_pwindowoids;
 }
 
 // EOF

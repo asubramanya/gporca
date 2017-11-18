@@ -19,7 +19,7 @@
 #include "gpopt/engine/CEnumeratorConfig.h"
 #include "gpopt/engine/CCTEConfig.h"
 #include "gpopt/engine/CHint.h"
-#include "gpopt/base/CDefaultOids.h"
+#include "gpopt/base/CWindowOids.h"
 
 namespace gpopt
 {
@@ -57,7 +57,7 @@ namespace gpopt
 			CHint *m_phint;
 
 			// default oids
-			CDefaultOids *m_pdefoids;
+			CWindowOids *m_pwindowoids;
 
 		public:
 
@@ -69,7 +69,7 @@ namespace gpopt
 				CCTEConfig *pcteconf,
 				ICostModel *pcm,
 				CHint *phint,
-				CDefaultOids *pdefoidsGPDB
+				CWindowOids *pdefoidsGPDB
 				);
 
 			// dtor
@@ -102,9 +102,9 @@ namespace gpopt
 			}
 			
 			// default oids
-			CDefaultOids *Pdefoids() const
+			CWindowOids *Pwindowoids() const
 			{
-				return m_pdefoids;
+				return m_pwindowoids;
 			}
 
 			// hint configuration

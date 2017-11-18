@@ -101,7 +101,7 @@ CMissingStatsTest::EresUnittest_RunTests()
 												CCTEConfig::PcteconfDefault(pmp),
 												pcm,
 												CHint::PhintDefault(pmp),
-												CDefaultOids::PdefOids(pmp)
+												CWindowOids::Pwindowoids(pmp)
 												);
 		SMissingStatsTestCase testCase = rgtc[ul];
 

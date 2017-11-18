@@ -131,7 +131,7 @@ CMiniDumperDXLTest::EresUnittest_Basic()
 												CCTEConfig::PcteconfDefault(pmp),
 												ICostModel::PcmDefault(pmp),
 												CHint::PhintDefault(pmp),
-												CDefaultOids::PdefOids(pmp)
+												CWindowOids::Pwindowoids(pmp)
 												);
 
 		// setup opt ctx

@@ -3,18 +3,18 @@
 //	Copyright (C) 2016 Pivotal Software, Inc.
 //
 //	@filename:
-//		CParseHandlerDefaultOids.h
+//		CParseHandlerWindowOids.h
 //
 //	@doc:
 //		SAX parse handler class for parsing default oids
 //---------------------------------------------------------------------------
 
-#ifndef GPDXL_CParseHandlerDefaultOids_H
-#define GPDXL_CParseHandlerDefaultOids_H
+#ifndef GPDXL_CParseHandlerWindowOids_H
+#define GPDXL_CParseHandlerWindowOids_H
 
 #include "gpos/base.h"
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
-#include "gpopt/base/CDefaultOids.h"
+#include "gpopt/base/CWindowOids.h"
 
 namespace gpdxl
 {
@@ -24,21 +24,21 @@ namespace gpdxl
 
 	//---------------------------------------------------------------------------
 	//	@class:
-	//		CParseHandlerDefaultOids
+	//		CParseHandlerWindowOids
 	//
 	//	@doc:
 	//		SAX parse handler class for parsing default oids
 	//
 	//---------------------------------------------------------------------------
-	class CParseHandlerDefaultOids : public CParseHandlerBase
+	class CParseHandlerWindowOids : public CParseHandlerBase
 	{
 		private:
 
 			// deafult oids
-			CDefaultOids *m_pdefoids;
+			CWindowOids *m_pwindowoids;
 
 			// private copy ctor
-			CParseHandlerDefaultOids(const CParseHandlerDefaultOids&);
+			CParseHandlerWindowOids(const CParseHandlerWindowOids&);
 
 			// process the start of an element
 			void StartElement
@@ -59,7 +59,7 @@ namespace gpdxl
 
 		public:
 			// ctor
-			CParseHandlerDefaultOids
+			CParseHandlerWindowOids
 				(
 				IMemoryPool *pmp,
 				CParseHandlerManager *pphm,
@@ -68,17 +68,17 @@ namespace gpdxl
 
 			// dtor
 			virtual
-			~CParseHandlerDefaultOids();
+			~CParseHandlerWindowOids();
 
 			// type of the parse handler
 			virtual
 			EDxlParseHandlerType Edxlphtype() const;
 
-			// default oids
-			CDefaultOids *Pdefoids() const;
+			// return system specific window oids
+			CWindowOids *Pwindowoids() const;
 	};
 }
 
-#endif // !GPDXL_CParseHandlerDefaultOids_H
+#endif // !GPDXL_CParseHandlerWindowOids_H
 
 // EOF

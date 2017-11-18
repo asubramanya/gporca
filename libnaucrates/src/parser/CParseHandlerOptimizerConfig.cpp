@@ -21,7 +21,7 @@
 #include "naucrates/dxl/parser/CParseHandlerCTEConfig.h"
 #include "naucrates/dxl/parser/CParseHandlerCostModel.h"
 #include "naucrates/dxl/parser/CParseHandlerHint.h"
-#include "naucrates/dxl/parser/CParseHandlerDefaultOids.h"
+#include "naucrates/dxl/parser/CParseHandlerWindowOids.h"
 
 
 #include "naucrates/dxl/operators/CDXLOperatorFactory.h"
@@ -29,7 +29,7 @@
 
 #include "naucrates/dxl/xml/dxltokens.h"
 
-#include "gpopt/base/CDefaultOids.h"
+#include "gpopt/base/CWindowOids.h"
 #include "gpopt/engine/CEnumeratorConfig.h"
 #include "gpopt/engine/CStatisticsConfig.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
@@ -101,13 +101,13 @@ CParseHandlerOptimizerConfig::StartElement
 		return;
 
 	}
-	if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenDefaultOids), xmlszLocalname))
+	if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowOids), xmlszLocalname))
 	{
 		// install a parse handler for the default OIDs
-		CParseHandlerBase *pphDefaultOids = CParseHandlerFactory::Pph(m_pmp, CDXLTokens::XmlstrToken(EdxltokenDefaultOids), m_pphm, this);
-		m_pphm->ActivateParseHandler(pphDefaultOids);
-		pphDefaultOids->startElement(xmlszUri, xmlszLocalname, xmlszQname, attrs);
-		this->Append(pphDefaultOids);
+		CParseHandlerBase *pphWindowOids = CParseHandlerFactory::Pph(m_pmp, CDXLTokens::XmlstrToken(EdxltokenWindowOids), m_pphm, this);
+		m_pphm->ActivateParseHandler(pphWindowOids);
+		pphWindowOids->startElement(xmlszUri, xmlszLocalname, xmlszQname, attrs);
+		this->Append(pphWindowOids);
 		return;
 
 	}
@@ -194,13 +194,13 @@ CParseHandlerOptimizerConfig::EndElement
 	
 	ICostModel *pcm = NULL;
 	CHint *phint = NULL;
-	CDefaultOids *pdefoidsGPDB = NULL;
+	CWindowOids *pwindowoidsGPDB = NULL;
 	if (4 == this->UlLength())
 	{
 		// no cost model: use default one
 		pcm = ICostModel::PcmDefault(m_pmp);
 		phint = CHint::PhintDefault(m_pmp);
-		pdefoidsGPDB = CDefaultOids::PdefOids(m_pmp);
+		pwindowoidsGPDB = CWindowOids::Pwindowoids(m_pmp);
 	}
 	else
 	{
@@ -212,7 +212,7 @@ CParseHandlerOptimizerConfig::EndElement
 		if (5 == this->UlLength())
 		{
 			phint = CHint::PhintDefault(m_pmp);
-			pdefoidsGPDB = CDefaultOids::PdefOids(m_pmp);
+			pwindowoidsGPDB = CWindowOids::Pwindowoids(m_pmp);
 		}
 		else
 		{
@@ -223,21 +223,21 @@ CParseHandlerOptimizerConfig::EndElement
 
 			if (6 == this->UlLength())
 			{
-				pdefoidsGPDB = CDefaultOids::PdefOids(m_pmp);
+				pwindowoidsGPDB = CWindowOids::Pwindowoids(m_pmp);
 			}
 			else
 			{
-				CParseHandlerDefaultOids *pphDefoidsGPDB = dynamic_cast<CParseHandlerDefaultOids *>((*this)[4]);
-				pdefoidsGPDB = pphDefoidsGPDB->Pdefoids();
-				GPOS_ASSERT(NULL != pdefoidsGPDB);
-				pdefoidsGPDB->AddRef();
+				CParseHandlerWindowOids *pphDefoidsGPDB = dynamic_cast<CParseHandlerWindowOids *>((*this)[4]);
+				pwindowoidsGPDB = pphDefoidsGPDB->Pwindowoids();
+				GPOS_ASSERT(NULL != pwindowoidsGPDB);
+				pwindowoidsGPDB->AddRef();
 			}
 		}
 	}
 
-	GPOS_ASSERT(NULL != pdefoidsGPDB);
+	GPOS_ASSERT(NULL != pwindowoidsGPDB);
 
-	m_poconf = GPOS_NEW(m_pmp) COptimizerConfig(pec, pstatsconf, pcteconfig, pcm, phint, pdefoidsGPDB);
+	m_poconf = GPOS_NEW(m_pmp) COptimizerConfig(pec, pstatsconf, pcteconfig, pcm, phint, pwindowoidsGPDB);
 
 	CParseHandlerTraceFlags *pphTraceFlags = dynamic_cast<CParseHandlerTraceFlags *>((*this)[this->UlLength() - 1]);
 	pphTraceFlags->Pbs()->AddRef();

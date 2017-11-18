@@ -20,7 +20,7 @@ add_library(gpopt
             include/gpopt/base/CStateMachine.h
             include/gpopt/base/CUtils.inl
             include/gpopt/base/IComparator.h
-            include/gpopt/base/CDefaultOids.h
+            include/gpopt/base/CWindowOids.h
             include/gpopt/cost/CCost.h
             include/gpopt/cost/ICostModel.h
             include/gpopt/cost/ICostModelParams.h

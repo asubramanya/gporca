@@ -2560,7 +2560,7 @@ CTestUtils::PexprOneWindowFunction
 {
 	CExpression *pexprGet = PexprLogicalGet(pmp);
 
-	OID oidRowNumber = COptCtxt::PoctxtFromTLS()->Poconf()->Pdefoids()->OidRowNumber();
+	OID oidRowNumber = COptCtxt::PoctxtFromTLS()->Poconf()->Pwindowoids()->OidRowNumber();
 
 	return PexprLogicalSequenceProject(pmp, oidRowNumber, pexprGet);
 }
@@ -2582,7 +2582,7 @@ CTestUtils::PexprTwoWindowFunctions
 {
 	CExpression *pexprWinFunc = PexprOneWindowFunction(pmp);
 
-	OID oidRank = COptCtxt::PoctxtFromTLS()->Poconf()->Pdefoids()->OidRank();
+	OID oidRank = COptCtxt::PoctxtFromTLS()->Poconf()->Pwindowoids()->OidRank();
 
 	return PexprLogicalSequenceProject(pmp, oidRank, pexprWinFunc);
 }
@@ -3812,7 +3812,7 @@ CTestUtils::EresSamplePlans
 								CCTEConfig::PcteconfDefault(pmp),
 								ICostModel::PcmDefault(pmp),
 								CHint::PhintDefault(pmp),
-								CDefaultOids::PdefOids(pmp)
+								CWindowOids::Pwindowoids(pmp)
 								);
 		}
 		else
@@ -3954,7 +3954,7 @@ CTestUtils::EresCheckPlans
 								CCTEConfig::PcteconfDefault(pmp),
 								ICostModel::PcmDefault(pmp),
 								CHint::PhintDefault(pmp),
-								CDefaultOids::PdefOids(pmp)
+								CWindowOids::Pwindowoids(pmp)
 								);
 		}
 		else

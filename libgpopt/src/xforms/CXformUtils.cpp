@@ -2367,7 +2367,7 @@ CXformUtils::PexprRowNumber
 	)
 {
 
-	OID oidRowNumber = COptCtxt::PoctxtFromTLS()->Poconf()->Pdefoids()->OidRowNumber();
+	OID oidRowNumber = COptCtxt::PoctxtFromTLS()->Poconf()->Pwindowoids()->OidRowNumber();
 
 	CScalarWindowFunc *popRowNumber = GPOS_NEW(pmp) CScalarWindowFunc
 													(

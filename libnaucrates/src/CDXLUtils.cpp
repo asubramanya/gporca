@@ -1183,7 +1183,7 @@ CDXLUtils::SerializeOptimizerConfig
 	const CCTEConfig *pcteconf = poconf->Pcteconf();
 	const ICostModel *pcm = poconf->Pcm();
 	const CHint *phint = poconf->Phint();
-	const CDefaultOids *pdefoids = poconf->Pdefoids();
+	const CWindowOids *pwindowoids = poconf->Pwindowoids();
 
 	CXMLSerializer xmlser(pmp, os, fIndent);
 
@@ -1220,9 +1220,9 @@ CDXLUtils::SerializeOptimizerConfig
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenEnforceConstraintsOnDML), phint->FEnforceConstraintsOnDML());
 	xmlser.CloseElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenHint));
 
-	xmlser.OpenElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenDefaultOids));
-	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRowNumber), pdefoids->OidRowNumber());
-	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRank), pdefoids->OidRank());
+	xmlser.OpenElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenWindowOids));
+	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRowNumber), pwindowoids->OidRowNumber());
+	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRank), pwindowoids->OidRank());
 }
 
 

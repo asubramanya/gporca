@@ -3,13 +3,13 @@
 //	Copyright (C) 2017 Pivotal Inc.
 //
 //	@filename:
-//		CDefaultOids.h
+//		CWindowOids.h
 //
 //	@doc:
-//		GPDB specific oids
+//		System specific oids for window operations
 //---------------------------------------------------------------------------
-#ifndef GPOPT_CDefaultOids_H
-#define GPOPT_CDefaultOids_H
+#ifndef GPOPT_CWindowOids_H
+#define GPOPT_CWindowOids_H
 
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
@@ -26,13 +26,13 @@ namespace gpopt
 
 	//---------------------------------------------------------------------------
 	//	@class:
-	//		CDefaultOids
+	//		CWindowOids
 	//
 	//	@doc:
 	//		GPDB specific oids
 	//
 	//---------------------------------------------------------------------------
-	class CDefaultOids : public CRefCount
+	class CWindowOids : public CRefCount
 	{
 		private:
 
@@ -44,7 +44,7 @@ namespace gpopt
 
 		public:
 
-			CDefaultOids(OID oidRowNumber, OID oidRank)
+			CWindowOids(OID oidRowNumber, OID oidRank)
 			{
 				m_oidRowNumber = oidRowNumber;
 				m_oidRank = oidRank;
@@ -66,14 +66,14 @@ namespace gpopt
 
 			// generate default oids
 			static
-			CDefaultOids *PdefOids(IMemoryPool *pmp)
+			CWindowOids *Pwindowoids(IMemoryPool *pmp)
 			{
-				return GPOS_NEW(pmp) CDefaultOids(DUMMY_ROW_NUMBER_OID, DUMMY_WIN_RANK);
+				return GPOS_NEW(pmp) CWindowOids(DUMMY_ROW_NUMBER_OID, DUMMY_WIN_RANK);
 			}
 
-	}; // class CDefaultOids
+	}; // class CWindowOids
 }
 
-#endif // !GPOPT_CDefaultOids_H
+#endif // !GPOPT_CWindowOids_H
 
 // EOF
