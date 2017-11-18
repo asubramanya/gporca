@@ -64,7 +64,7 @@ namespace gpopt
 				return m_oidRank;
 			}
 
-			// generate default oids
+			// generate default window oids
 			static
 			CWindowOids *Pwindowoids(IMemoryPool *pmp)
 			{

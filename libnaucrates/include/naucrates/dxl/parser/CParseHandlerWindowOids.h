@@ -6,7 +6,7 @@
 //		CParseHandlerWindowOids.h
 //
 //	@doc:
-//		SAX parse handler class for parsing default oids
+//		SAX parse handler class for parsing window function oids
 //---------------------------------------------------------------------------
 
 #ifndef GPDXL_CParseHandlerWindowOids_H
@@ -27,7 +27,7 @@ namespace gpdxl
 	//		CParseHandlerWindowOids
 	//
 	//	@doc:
-	//		SAX parse handler class for parsing default oids
+	//		SAX parse handler class for parsing window function oids
 	//
 	//---------------------------------------------------------------------------
 	class CParseHandlerWindowOids : public CParseHandlerBase

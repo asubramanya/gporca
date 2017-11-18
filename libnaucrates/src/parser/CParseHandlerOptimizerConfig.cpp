@@ -103,7 +103,7 @@ CParseHandlerOptimizerConfig::StartElement
 	}
 	if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowOids), xmlszLocalname))
 	{
-		// install a parse handler for the default OIDs
+		// install a parse handler for the window function oids
 		CParseHandlerBase *pphWindowOids = CParseHandlerFactory::Pph(m_pmp, CDXLTokens::XmlstrToken(EdxltokenWindowOids), m_pphm, this);
 		m_pphm->ActivateParseHandler(pphWindowOids);
 		pphWindowOids->startElement(xmlszUri, xmlszLocalname, xmlszQname, attrs);

@@ -6,7 +6,7 @@
 //		CParseHandlerWindowOids.cpp
 //
 //	@doc:
-//		Implementation of the SAX parse handler class for parsing default oids
+//		Implementation of the SAX parse handler class for parsing window oids
 //---------------------------------------------------------------------------
 
 #include "naucrates/dxl/parser/CParseHandlerManager.h"
@@ -54,7 +54,7 @@ CParseHandlerWindowOids::StartElement
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, pstr->Wsz());
 	}
 
-	// parse default oids
+	// parse window function oids
 	OID oidRowNumber = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRowNumber, EdxltokenWindowOids);
 	OID oidRank = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRank, EdxltokenWindowOids);
 
