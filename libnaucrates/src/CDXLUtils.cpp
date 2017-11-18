@@ -1183,6 +1183,7 @@ CDXLUtils::SerializeOptimizerConfig
 	const CCTEConfig *pcteconf = poconf->Pcteconf();
 	const ICostModel *pcm = poconf->Pcm();
 	const CHint *phint = poconf->Phint();
+	const CDefaultOids *pdefoids = poconf->Pdefoids();
 
 	CXMLSerializer xmlser(pmp, os, fIndent);
 
@@ -1218,6 +1219,9 @@ CDXLUtils::SerializeOptimizerConfig
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenBroadcastThreshold), phint->UlBroadcastThreshold());
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenEnforceConstraintsOnDML), phint->FEnforceConstraintsOnDML());
 	xmlser.CloseElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenHint));
+
+	xmlser.OpenElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenDefaultOids));
+	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRowNumber), pdefoids->OidRowNumber());
 }
 
 

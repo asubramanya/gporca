@@ -42,6 +42,7 @@ namespace gpdxl
 		EdxlphStatisticsConfig,
 		EdxlphCTEConfig,
 		EdxlphHint,
+		EdxlphDefaultOids,
 		EdxlphTraceFlags,
 		EdxlphPlan,
 		EdxlphQuery,

@@ -21,12 +21,15 @@
 #include "naucrates/dxl/parser/CParseHandlerCTEConfig.h"
 #include "naucrates/dxl/parser/CParseHandlerCostModel.h"
 #include "naucrates/dxl/parser/CParseHandlerHint.h"
+#include "naucrates/dxl/parser/CParseHandlerDefaultOids.h"
+
 
 #include "naucrates/dxl/operators/CDXLOperatorFactory.h"
 #include "naucrates/traceflags/traceflags.h"
 
 #include "naucrates/dxl/xml/dxltokens.h"
 
+#include "gpopt/base/CDefaultOids.h"
 #include "gpopt/engine/CEnumeratorConfig.h"
 #include "gpopt/engine/CStatisticsConfig.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
@@ -95,6 +98,16 @@ CParseHandlerOptimizerConfig::StartElement
 		m_pphm->ActivateParseHandler(pphHint);
 		pphHint->startElement(xmlszUri, xmlszLocalname, xmlszQname, attrs);
 		this->Append(pphHint);
+		return;
+
+	}
+	if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenDefaultOids), xmlszLocalname))
+	{
+		// install a parse handler for the default OIDs
+		CParseHandlerBase *pphDefaultOids = CParseHandlerFactory::Pph(m_pmp, CDXLTokens::XmlstrToken(EdxltokenDefaultOids), m_pphm, this);
+		m_pphm->ActivateParseHandler(pphDefaultOids);
+		pphDefaultOids->startElement(xmlszUri, xmlszLocalname, xmlszQname, attrs);
+		this->Append(pphDefaultOids);
 		return;
 
 	}
@@ -181,35 +194,50 @@ CParseHandlerOptimizerConfig::EndElement
 	
 	ICostModel *pcm = NULL;
 	CHint *phint = NULL;
-	if (5 == this->UlLength())
-	{
-		CParseHandlerCostModel *pphCostModelConfig = dynamic_cast<CParseHandlerCostModel *>((*this)[3]);
-		pcm = pphCostModelConfig->Pcm();
-		GPOS_ASSERT(NULL != pcm);
-		pcm->AddRef();
-
-		phint = CHint::PhintDefault(m_pmp);
-	}
-	else if (6 == this->UlLength())
-	{
-		CParseHandlerCostModel *pphCostModelConfig = dynamic_cast<CParseHandlerCostModel *>((*this)[3]);
-		pcm = pphCostModelConfig->Pcm();
-		GPOS_ASSERT(NULL != pcm);
-		pcm->AddRef();
-
-		CParseHandlerHint *pphHint = dynamic_cast<CParseHandlerHint *>((*this)[4]);
-		phint = pphHint->Phint();
-		GPOS_ASSERT(NULL != phint);
-		phint->AddRef();
-	}
-	else
+	CDefaultOids *pdefoidsGPDB = NULL;
+	if (4 == this->UlLength())
 	{
 		// no cost model: use default one
 		pcm = ICostModel::PcmDefault(m_pmp);
 		phint = CHint::PhintDefault(m_pmp);
+		pdefoidsGPDB = GPOS_NEW(m_pmp) CDefaultOids(7000);
+	}
+	else
+	{
+		CParseHandlerCostModel *pphCostModelConfig = dynamic_cast<CParseHandlerCostModel *>((*this)[3]);
+		pcm = pphCostModelConfig->Pcm();
+		GPOS_ASSERT(NULL != pcm);
+		pcm->AddRef();
+
+		if (5 == this->UlLength())
+		{
+			phint = CHint::PhintDefault(m_pmp);
+			pdefoidsGPDB = GPOS_NEW(m_pmp) CDefaultOids(7000);
+		}
+		else
+		{
+			CParseHandlerHint *pphHint = dynamic_cast<CParseHandlerHint *>((*this)[4]);
+			phint = pphHint->Phint();
+			GPOS_ASSERT(NULL != phint);
+			phint->AddRef();
+
+			if (6 == this->UlLength())
+			{
+				pdefoidsGPDB = GPOS_NEW(m_pmp) CDefaultOids(7000);
+			}
+			else
+			{
+				CParseHandlerDefaultOids *pphDefoidsGPDB = dynamic_cast<CParseHandlerDefaultOids *>((*this)[4]);
+				pdefoidsGPDB = pphDefoidsGPDB->Pdefoids();
+				GPOS_ASSERT(NULL != pdefoidsGPDB);
+				pdefoidsGPDB->AddRef();
+			}
+		}
 	}
 
-	m_poconf = GPOS_NEW(m_pmp) COptimizerConfig(pec, pstatsconf, pcteconfig, pcm, phint);
+	GPOS_ASSERT(NULL != pdefoidsGPDB);
+
+	m_poconf = GPOS_NEW(m_pmp) COptimizerConfig(pec, pstatsconf, pcteconfig, pcm, phint, pdefoidsGPDB);
 
 	CParseHandlerTraceFlags *pphTraceFlags = dynamic_cast<CParseHandlerTraceFlags *>((*this)[this->UlLength() - 1]);
 	pphTraceFlags->Pbs()->AddRef();

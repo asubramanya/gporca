@@ -3807,7 +3807,8 @@ CTestUtils::EresSamplePlans
 								CStatisticsConfig::PstatsconfDefault(pmp),
 								CCTEConfig::PcteconfDefault(pmp),
 								ICostModel::PcmDefault(pmp),
-								CHint::PhintDefault(pmp)
+								CHint::PhintDefault(pmp),
+								CDefaultOids::PdefOids(pmp)
 								);
 		}
 		else
@@ -3948,7 +3949,8 @@ CTestUtils::EresCheckPlans
 								CStatisticsConfig::PstatsconfDefault(pmp),
 								CCTEConfig::PcteconfDefault(pmp),
 								ICostModel::PcmDefault(pmp),
-								CHint::PhintDefault(pmp)
+								CHint::PhintDefault(pmp),
+								CDefaultOids::PdefOids(pmp)
 								);
 		}
 		else
