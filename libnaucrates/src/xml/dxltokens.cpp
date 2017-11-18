@@ -87,6 +87,7 @@ CDXLTokens::Init
 			{EdxltokenEnforceConstraintsOnDML, GPOS_WSZ_LIT("EnforceConstraintsOnDML")},
 			{EdxltokenDefaultOids, GPOS_WSZ_LIT("DefaultOids")},
 			{EdxltokenOidRowNumber, GPOS_WSZ_LIT("RowNumber")},
+			{EdxltokenOidRank, GPOS_WSZ_LIT("Rank")},
 
 			{EdxltokenPlanSamples, GPOS_WSZ_LIT("PlanSamples")},
 			

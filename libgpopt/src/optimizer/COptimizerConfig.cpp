@@ -97,7 +97,7 @@ COptimizerConfig::PoconfDefault
 						CCTEConfig::PcteconfDefault(pmp),
 						ICostModel::PcmDefault(pmp),
 						CHint::PhintDefault(pmp),
-						GPOS_NEW(pmp) CDefaultOids(7000)
+						CDefaultOids::PdefOids(pmp)
 						);
 }
 
@@ -125,7 +125,7 @@ COptimizerConfig::PoconfDefault
 						CCTEConfig::PcteconfDefault(pmp),
 						pcm,
 						CHint::PhintDefault(pmp),
-						GPOS_NEW(pmp) CDefaultOids(7000)
+						CDefaultOids::PdefOids(pmp)
 						);
 }
 

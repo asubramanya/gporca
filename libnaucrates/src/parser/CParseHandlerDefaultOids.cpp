@@ -56,8 +56,9 @@ CParseHandlerDefaultOids::StartElement
 
 	// parse default oids
 	OID oidRowNumber = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRowNumber, EdxltokenDefaultOids);
+	OID oidRank = CDXLOperatorFactory::OidValueFromAttrs(m_pphm->Pmm(), attrs, EdxltokenOidRank, EdxltokenDefaultOids);
 
-	m_pdefoids = GPOS_NEW(m_pmp) CDefaultOids(oidRowNumber);
+	m_pdefoids = GPOS_NEW(m_pmp) CDefaultOids(oidRowNumber, oidRank);
 }
 
 // invoked by Xerces to process a closing tag

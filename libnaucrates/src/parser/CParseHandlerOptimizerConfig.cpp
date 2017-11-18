@@ -200,7 +200,7 @@ CParseHandlerOptimizerConfig::EndElement
 		// no cost model: use default one
 		pcm = ICostModel::PcmDefault(m_pmp);
 		phint = CHint::PhintDefault(m_pmp);
-		pdefoidsGPDB = GPOS_NEW(m_pmp) CDefaultOids(7000);
+		pdefoidsGPDB = CDefaultOids::PdefOids(m_pmp);
 	}
 	else
 	{
@@ -212,7 +212,7 @@ CParseHandlerOptimizerConfig::EndElement
 		if (5 == this->UlLength())
 		{
 			phint = CHint::PhintDefault(m_pmp);
-			pdefoidsGPDB = GPOS_NEW(m_pmp) CDefaultOids(7000);
+			pdefoidsGPDB = CDefaultOids::PdefOids(m_pmp);
 		}
 		else
 		{
@@ -223,7 +223,7 @@ CParseHandlerOptimizerConfig::EndElement
 
 			if (6 == this->UlLength())
 			{
-				pdefoidsGPDB = GPOS_NEW(m_pmp) CDefaultOids(7000);
+				pdefoidsGPDB = CDefaultOids::PdefOids(m_pmp);
 			}
 			else
 			{

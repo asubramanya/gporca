@@ -2560,7 +2560,9 @@ CTestUtils::PexprOneWindowFunction
 {
 	CExpression *pexprGet = PexprLogicalGet(pmp);
 
-	return PexprLogicalSequenceProject(pmp, GPDB_WIN_ROW_NUMBER, pexprGet);
+	OID oidRowNumber = COptCtxt::PoctxtFromTLS()->Poconf()->Pdefoids()->OidRowNumber();
+
+	return PexprLogicalSequenceProject(pmp, oidRowNumber, pexprGet);
 }
 
 
@@ -2580,7 +2582,9 @@ CTestUtils::PexprTwoWindowFunctions
 {
 	CExpression *pexprWinFunc = PexprOneWindowFunction(pmp);
 
-	return PexprLogicalSequenceProject(pmp, GPDB_WIN_RANK, pexprWinFunc);
+	OID oidRank = COptCtxt::PoctxtFromTLS()->Poconf()->Pdefoids()->OidRank();
+
+	return PexprLogicalSequenceProject(pmp, oidRank, pexprWinFunc);
 }
 
 

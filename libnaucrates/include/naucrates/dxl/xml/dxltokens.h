@@ -64,6 +64,7 @@ namespace gpdxl
 		EdxltokenEnforceConstraintsOnDML,
 		EdxltokenDefaultOids,
 		EdxltokenOidRowNumber,
+		EdxltokenOidRank,
 
 		EdxltokenPlanSamples,
 
