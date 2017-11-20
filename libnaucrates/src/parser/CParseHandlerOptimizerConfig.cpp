@@ -178,7 +178,7 @@ CParseHandlerOptimizerConfig::EndElement
 	}
 	
 	GPOS_ASSERT(NULL == m_poconf);
-	GPOS_ASSERT(6 >= this->UlLength());
+	GPOS_ASSERT(7 >= this->UlLength());
 
 	CParseHandlerEnumeratorConfig *pphEnumeratorConfig = dynamic_cast<CParseHandlerEnumeratorConfig *>((*this)[0]);
 	CEnumeratorConfig *pec = pphEnumeratorConfig->Pec();
@@ -227,7 +227,7 @@ CParseHandlerOptimizerConfig::EndElement
 			}
 			else
 			{
-				CParseHandlerWindowOids *pphDefoidsGPDB = dynamic_cast<CParseHandlerWindowOids *>((*this)[4]);
+				CParseHandlerWindowOids *pphDefoidsGPDB = dynamic_cast<CParseHandlerWindowOids *>((*this)[5]);
 				pwindowoidsGPDB = pphDefoidsGPDB->Pwindowoids();
 				GPOS_ASSERT(NULL != pwindowoidsGPDB);
 				pwindowoidsGPDB->AddRef();

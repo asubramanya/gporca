@@ -21,6 +21,7 @@
 #include "naucrates/dxl/CDXLUtils.h"
 
 #include "gpopt/eval/CConstExprEvaluatorDefault.h"
+#include "gpopt/optimizer/COptimizerConfig.h"
 
 #include "unittest/base.h"
 #include "unittest/dxl/CParseHandlerTest.h"
@@ -170,6 +171,10 @@ CParseHandlerTest::m_rgszNegativeTestsFileNames[] =
 		"../data/dxl/parse_tests/f17-Limit-MissingCount.xml",
 	};
 
+// input file for optimizer config parsing test
+const CHAR *
+CParseHandlerTest::m_rgszOptimizerConfigTestFileNames = "../data/dxl/parse_tests/OptimizerConfig.xml";
+
                                   
 //---------------------------------------------------------------------------
 //	@function:
@@ -188,6 +193,7 @@ CParseHandlerTest::EresUnittest()
 		GPOS_UNITTEST_FUNC(CParseHandlerTest::EresUnittest_Statistics),
 		GPOS_UNITTEST_FUNC(CParseHandlerTest::EresUnittest_Metadata),
 		GPOS_UNITTEST_FUNC(CParseHandlerTest::EresUnittest_MDRequest),
+		GPOS_UNITTEST_FUNC(CParseHandlerTest::EresUnittest_RunOptimizerConfigTests),
 		GPOS_UNITTEST_FUNC(CParseHandlerTest::EresUnittest_RunPlanTests),
 		// tests involving dxl representation of queries.
 		GPOS_UNITTEST_FUNC(CParseHandlerTest::EresUnittest_RunQueryTests),
@@ -823,6 +829,61 @@ CParseHandlerTest::EresParseAndSerializeScalarExpr
 	GPOS_DELETE_ARRAY(szDXL);
 
 	return eres;
+}
+
+GPOS_RESULT
+CParseHandlerTest::EresUnittest_RunOptimizerConfigTests()
+{
+	// create own memory pool
+	CAutoMemoryPool amp;
+	IMemoryPool *pmp = amp.Pmp();
+
+	return EresParseAndSerializeOptimizerConfig(pmp, m_rgszOptimizerConfigTestFileNames, false /* fvalidate */);
+}
+
+GPOS_RESULT
+CParseHandlerTest::EresParseAndSerializeOptimizerConfig
+	(
+	IMemoryPool *pmp,
+	const CHAR *szDXLFileName,
+	BOOL fValidate
+	)
+{
+	CWStringDynamic str(pmp);
+	COstreamString oss(&str);
+
+	// read DXL file
+	CHAR *szDXL = CDXLUtils::SzRead(pmp, szDXLFileName);
+
+	GPOS_CHECK_ABORT;
+
+	const CHAR *szValidationPath = NULL;
+
+	if (fValidate)
+	{
+	   szValidationPath = CTestUtils::m_szXSDPath;
+	}
+
+	COptimizerConfig *poconf = CDXLUtils::PoptimizerConfigParseDXL(pmp, szDXL, szValidationPath);
+
+	GPOS_ASSERT(NULL != poconf);
+
+	GPOS_CHECK_ABORT;
+
+	CDXLUtils::SerializeOptimizerConfig(pmp, oss, poconf, true /*fIndent*/);
+
+	GPOS_CHECK_ABORT;
+
+	CWStringDynamic strExpected(pmp);
+	strExpected.AppendFormat(GPOS_WSZ_LIT("%s"), szDXL);
+
+	GPOS_ASSERT(strExpected.FEquals(&str));
+
+	poconf->Release();
+	GPOS_DELETE_ARRAY(szDXL);
+
+	return GPOS_OK;
+
 }
 
 // EOF

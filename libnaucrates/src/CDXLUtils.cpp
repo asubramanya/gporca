@@ -553,6 +553,29 @@ CDXLUtils::PmdrequestParseDXL
 	return pmdr;
 }
 
+// parse optimizer config DXL
+COptimizerConfig *
+CDXLUtils::PoptimizerConfigParseDXL
+	(
+	IMemoryPool *pmp,
+	const CHAR *szDXL,
+	const CHAR *szXSDPath
+	)
+{
+	GPOS_ASSERT(NULL != pmp);
+
+	// create and install a parse handler for the DXL document
+	CParseHandlerDXL *pphdxl = PphdxlParseDXL(pmp, szDXL, szXSDPath);
+	CAutoP<CParseHandlerDXL> a_pphdxl(pphdxl);
+
+	// collect optimizer conf from dxl parse handler
+	COptimizerConfig *poconf = pphdxl->Poconf();
+	GPOS_ASSERT(NULL != poconf);
+	poconf->AddRef();
+
+	return poconf;
+}
+
 
 //---------------------------------------------------------------------------
 //	@function:

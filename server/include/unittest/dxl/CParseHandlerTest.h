@@ -64,6 +64,10 @@ namespace gpdxl
 			// files for testing exception handling in DXL parsing
 			static
 			const CHAR *m_rgszNegativeTestsFileNames[];
+
+			// files for optimizer config parsing tests
+			static
+			const CHAR *m_rgszOptimizerConfigTestFileNames;
 			
 			// test parsing and serializing of plans 
 			static 
@@ -88,6 +92,10 @@ namespace gpdxl
 			// test parsing and serializing of scalar expressions
 			static
 			GPOS_RESULT EresParseAndSerializeScalarExpr(IMemoryPool *, const CHAR *, BOOL fValidate);
+
+			// test parsing and serializing of optimizer config
+			static
+			GPOS_RESULT EresParseAndSerializeOptimizerConfig(IMemoryPool *, const CHAR *, BOOL fValidate);
 
 		public:
 
@@ -137,6 +145,10 @@ namespace gpdxl
 			// tests checking the "failing" tests
 			static 
 			GPOS_RESULT EresUnittest_RunAllNegativeTests();
+
+			// tests checking optimizer config parsing
+			static
+			GPOS_RESULT EresUnittest_RunOptimizerConfigTests();
 
 	}; // class CParseHandlerTest
 }
