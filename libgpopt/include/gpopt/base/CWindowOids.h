@@ -17,8 +17,6 @@
 
 #define DUMMY_ROW_NUMBER_OID OID(7000)
 #define DUMMY_WIN_RANK OID(7001)
-#define DUMMY_WIN_FIRST_VALUE OID(7029)
-#define DUMMY_WIN_LAST_VALUE OID(7012)
 
 
 namespace gpopt
