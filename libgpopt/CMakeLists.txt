@@ -20,7 +20,6 @@ add_library(gpopt
             include/gpopt/base/CStateMachine.h
             include/gpopt/base/CUtils.inl
             include/gpopt/base/IComparator.h
-            include/gpopt/base/CWindowOids.h
             include/gpopt/cost/CCost.h
             include/gpopt/cost/ICostModel.h
             include/gpopt/cost/ICostModelParams.h
@@ -211,6 +210,8 @@ add_library(gpopt
             src/base/CCastUtils.cpp
             include/gpopt/base/CWindowFrame.h
             src/base/CWindowFrame.cpp
+            include/gpopt/base/CWindowOids.h
+            src/base/CWindowOids.cpp
             include/gpopt/base/IColConstraintsMapper.h
             src/base/IColConstraintsMapper.cpp
             include/gpopt/engine/CEngine.h

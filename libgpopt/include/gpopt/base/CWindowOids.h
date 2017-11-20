@@ -11,7 +11,6 @@
 #ifndef GPOPT_CWindowOids_H
 #define GPOPT_CWindowOids_H
 
-#include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
 #include "naucrates/dxl/gpdb_types.h"
 
@@ -42,32 +41,17 @@ namespace gpopt
 
 		public:
 
-			CWindowOids(OID oidRowNumber, OID oidRank)
-			{
-				m_oidRowNumber = oidRowNumber;
-				m_oidRank = oidRank;
-			}
+			CWindowOids(OID oidRowNumber, OID oidRank);
 
 			// accessor of oid value of "row_number" function
-			virtual
-			OID OidRowNumber() const
-			{
-				return m_oidRowNumber;
-			}
+			OID OidRowNumber() const;
 
 			// accessor of oid value of "rank" function
-			virtual
-			OID OidRank() const
-			{
-				return m_oidRank;
-			}
+			OID OidRank() const;
 
 			// generate default window oids
 			static
-			CWindowOids *Pwindowoids(IMemoryPool *pmp)
-			{
-				return GPOS_NEW(pmp) CWindowOids(DUMMY_ROW_NUMBER_OID, DUMMY_WIN_RANK);
-			}
+			CWindowOids *Pwindowoids(IMemoryPool *pmp);
 
 	}; // class CWindowOids
 }
