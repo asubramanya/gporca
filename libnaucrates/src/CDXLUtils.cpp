@@ -1223,6 +1223,7 @@ CDXLUtils::SerializeOptimizerConfig
 	xmlser.OpenElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenWindowOids));
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRowNumber), pwindowoids->OidRowNumber());
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRank), pwindowoids->OidRank());
+	xmlser.CloseElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenWindowOids));
 }
 
 
