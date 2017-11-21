@@ -198,7 +198,6 @@ CParseHandlerOptimizerConfig::EndElement
 		// no cost model: use default one
 		pcm = ICostModel::PcmDefault(m_pmp);
 		phint = CHint::PhintDefault(m_pmp);
-		pwindowoidsGPDB = CWindowOids::Pwindowoids(m_pmp);
 	}
 	else
 	{
@@ -207,10 +206,9 @@ CParseHandlerOptimizerConfig::EndElement
 		GPOS_ASSERT(NULL != pcm);
 		pcm->AddRef();
 
-		if (5 == this->UlLength())
+		if (6 == this->UlLength())
 		{
 			phint = CHint::PhintDefault(m_pmp);
-			pwindowoidsGPDB = CWindowOids::Pwindowoids(m_pmp);
 		}
 		else
 		{
