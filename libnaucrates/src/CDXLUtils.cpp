@@ -1229,6 +1229,11 @@ CDXLUtils::SerializeOptimizerConfig
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenCTEInliningCutoff), pcteconf->UlCTEInliningCutoff());
 	xmlser.CloseElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenCTEConfig));
 	
+	xmlser.OpenElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenWindowOids));
+	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRowNumber), pwindowoids->OidRowNumber());
+	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRank), pwindowoids->OidRank());
+	xmlser.CloseElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenWindowOids));
+
 	xmlser.OpenElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenCostModelConfig));
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenCostModelType), pcm->Ecmt());
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenSegmentsForCosting), pcm->UlHosts());
@@ -1242,11 +1247,6 @@ CDXLUtils::SerializeOptimizerConfig
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenBroadcastThreshold), phint->UlBroadcastThreshold());
 	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenEnforceConstraintsOnDML), phint->FEnforceConstraintsOnDML());
 	xmlser.CloseElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenHint));
-
-	xmlser.OpenElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenWindowOids));
-	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRowNumber), pwindowoids->OidRowNumber());
-	xmlser.AddAttribute(CDXLTokens::PstrToken(EdxltokenOidRank), pwindowoids->OidRank());
-	xmlser.CloseElement(CDXLTokens::PstrToken(EdxltokenNamespacePrefix), CDXLTokens::PstrToken(EdxltokenWindowOids));
 }
 
 

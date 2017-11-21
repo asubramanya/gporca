@@ -101,16 +101,6 @@ CParseHandlerOptimizerConfig::StartElement
 		return;
 
 	}
-	if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowOids), xmlszLocalname))
-	{
-		// install a parse handler for the window function oids
-		CParseHandlerBase *pphWindowOids = CParseHandlerFactory::Pph(m_pmp, CDXLTokens::XmlstrToken(EdxltokenWindowOids), m_pphm, this);
-		m_pphm->ActivateParseHandler(pphWindowOids);
-		pphWindowOids->startElement(xmlszUri, xmlszLocalname, xmlszQname, attrs);
-		this->Append(pphWindowOids);
-		return;
-
-	}
 	else if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenCostModelConfig), xmlszLocalname))
 	{
 		// install a parse handler for the cost model config
@@ -137,6 +127,9 @@ CParseHandlerOptimizerConfig::StartElement
 		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, pstr->Wsz());
 	}
 
+	CParseHandlerBase *pphWindowOids = CParseHandlerFactory::Pph(m_pmp, CDXLTokens::XmlstrToken(EdxltokenWindowOids), m_pphm, this);
+	m_pphm->ActivateParseHandler(pphWindowOids);
+
 	// install a parse handler for the CTE configuration
 	CParseHandlerBase *pphCTEConfig = CParseHandlerFactory::Pph(m_pmp, CDXLTokens::XmlstrToken(EdxltokenCTEConfig), m_pphm, this);
 	m_pphm->ActivateParseHandler(pphCTEConfig);
@@ -153,6 +146,7 @@ CParseHandlerOptimizerConfig::StartElement
 	this->Append(pphEnumeratorConfig);
 	this->Append(pphStatisticsConfig);
 	this->Append(pphCTEConfig);
+	this->Append(pphWindowOids);
 }
 
 //---------------------------------------------------------------------------
@@ -192,10 +186,14 @@ CParseHandlerOptimizerConfig::EndElement
 	CCTEConfig *pcteconfig = pphCTEConfig->Pcteconf();
 	pcteconfig->AddRef();
 	
+	CParseHandlerWindowOids *pphDefoidsGPDB = dynamic_cast<CParseHandlerWindowOids *>((*this)[3]);
+	CWindowOids *pwindowoidsGPDB = pphDefoidsGPDB->Pwindowoids();
+	GPOS_ASSERT(NULL != pwindowoidsGPDB);
+	pwindowoidsGPDB->AddRef();
+
 	ICostModel *pcm = NULL;
 	CHint *phint = NULL;
-	CWindowOids *pwindowoidsGPDB = NULL;
-	if (4 == this->UlLength())
+	if (5 == this->UlLength())
 	{
 		// no cost model: use default one
 		pcm = ICostModel::PcmDefault(m_pmp);
@@ -204,7 +202,7 @@ CParseHandlerOptimizerConfig::EndElement
 	}
 	else
 	{
-		CParseHandlerCostModel *pphCostModelConfig = dynamic_cast<CParseHandlerCostModel *>((*this)[3]);
+		CParseHandlerCostModel *pphCostModelConfig = dynamic_cast<CParseHandlerCostModel *>((*this)[4]);
 		pcm = pphCostModelConfig->Pcm();
 		GPOS_ASSERT(NULL != pcm);
 		pcm->AddRef();
@@ -216,26 +214,12 @@ CParseHandlerOptimizerConfig::EndElement
 		}
 		else
 		{
-			CParseHandlerHint *pphHint = dynamic_cast<CParseHandlerHint *>((*this)[4]);
+			CParseHandlerHint *pphHint = dynamic_cast<CParseHandlerHint *>((*this)[5]);
 			phint = pphHint->Phint();
 			GPOS_ASSERT(NULL != phint);
 			phint->AddRef();
-
-			if (6 == this->UlLength())
-			{
-				pwindowoidsGPDB = CWindowOids::Pwindowoids(m_pmp);
-			}
-			else
-			{
-				CParseHandlerWindowOids *pphDefoidsGPDB = dynamic_cast<CParseHandlerWindowOids *>((*this)[5]);
-				pwindowoidsGPDB = pphDefoidsGPDB->Pwindowoids();
-				GPOS_ASSERT(NULL != pwindowoidsGPDB);
-				pwindowoidsGPDB->AddRef();
-			}
 		}
 	}
-
-	GPOS_ASSERT(NULL != pwindowoidsGPDB);
 
 	m_poconf = GPOS_NEW(m_pmp) COptimizerConfig(pec, pstatsconf, pcteconfig, pcm, phint, pwindowoidsGPDB);
 
