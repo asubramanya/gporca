@@ -498,7 +498,7 @@ select * from x, y where (x.i > y.j);
         </dxl:Comparison>
       </dxl:LogicalJoin>
     </dxl:Query>
-    <dxl:Plan Id="3" SpaceSize="8">
+    <dxl:Plan Id="3" SpaceSize="9">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="2161.009337" Rows="1.000000" Width="44"/>
