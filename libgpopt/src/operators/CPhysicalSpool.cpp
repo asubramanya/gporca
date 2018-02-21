@@ -145,8 +145,40 @@ CPhysicalSpool::PppsRequired
 {
 	GPOS_ASSERT(0 == ulChildIndex);
 	GPOS_ASSERT(NULL != pppsRequired);
-	
-	return CPhysical::PppsRequiredPushThru(pmp, exprhdl, pppsRequired, ulChildIndex);
+
+    CPartIndexMap *ppimReqd = pppsRequired->Ppim();
+    CPartFilterMap *ppfmReqd = pppsRequired->Ppfm();
+
+    DrgPul *pdrgpul = ppimReqd->PdrgpulScanIds(pmp);
+
+    CPartIndexMap *ppimResult = GPOS_NEW(pmp) CPartIndexMap(pmp);
+    CPartFilterMap *ppfmResult = GPOS_NEW(pmp) CPartFilterMap(pmp);
+
+    /// get derived part consumers
+    CPartInfo *ppartinfo = exprhdl.Pdprel(0)->Ppartinfo();
+
+    const ULONG ulPartIndexSize = pdrgpul->UlLength();
+
+    for (ULONG ul = 0; ul < ulPartIndexSize; ul++)
+    {
+        ULONG ulPartIndexId = *((*pdrgpul)[ul]);
+
+        if (!ppartinfo->FContainsScanId(ulPartIndexId))
+        {
+            ppimResult->AddRequiredPartPropagation(ppimReqd, ulPartIndexId, CPartIndexMap::EppraPreservePropagators);
+        }
+        else
+        {
+            ppimResult->AddRequiredPartPropagation(ppimReqd, ulPartIndexId, CPartIndexMap::EppraZeroPropagators);
+        }
+
+        ppimResult->AddRequiredPartPropagation(ppimReqd, ulPartIndexId, CPartIndexMap::EppraPreservePropagators);
+        (void) ppfmResult->FCopyPartFilter(m_pmp, ulPartIndexId, ppfmReqd);
+    }
+
+    pdrgpul->Release();
+
+    return GPOS_NEW(pmp) CPartitionPropagationSpec(ppimResult, ppfmResult);
 }
 
 //---------------------------------------------------------------------------
