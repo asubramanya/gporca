@@ -384,6 +384,26 @@ CPhysicalSpool::EpetRewindability
 	return CEnfdProp::EpetUnnecessary;
 }
 
+BOOL
+CPhysicalSpool::FValidContext(IMemoryPool *__attribute__((unused)) pmp, COptimizationContext *__attribute__((unused)) poc, DrgPoc *pdrgpocChild) const
+{
+    GPOS_ASSERT(NULL != pdrgpocChild);
+    GPOS_ASSERT(1 == pdrgpocChild->UlLength());
+
+    COptimizationContext *pocChild = (*pdrgpocChild)[0];
+    CCostContext *pccBest = pocChild->PccBest();
+    GPOS_ASSERT(NULL != pccBest);
+
+    CDrvdPropPlan *pdpplanChild = pccBest->Pdpplan();
+    if (pdpplanChild->Ppim()->FContainsUnresolved())
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
 
 // EOF
 
