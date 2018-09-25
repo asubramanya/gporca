@@ -1187,30 +1187,7 @@ CCostModelGPDB::CostMotion
 			dRecvCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpNoOpCostUnit)->Get();
 		}
 
-		CDouble utilization = 1;
-		CDouble gain = 0;
-		if(COperator::EopPhysicalMotionHashDistribute == op_id)
-		{
-			CPhysicalMotion *motion = CPhysicalMotion::PopConvert(exprhdl.Pop());
-			CColRefSet *columns = motion->Pds()->PcrsUsed(mp);
-			CColRefArray *columns_array = columns->Pdrgpcr(mp);
-			CDouble ndv = 1;
-			for (ULONG i = 0; i < columns_array->Size(); ++i)
-			{
-				CColRef *col = (*columns_array)[i];
-				ndv = ndv * pci->Pcstats()->GetNDVs(col);
-			}
-			columns->Release();
-			columns_array->Release();
-			utilization = 1;
-			if (ndv < pcmgpdb->UlHosts())
-			{
-				utilization = (pcmgpdb->UlHosts() - ndv);
-				gain = 0.1;
-			}
-		}
-
-		recvCost = pci->Rows() * pci->Width() * pow(2.718, (utilization.Get() * gain.Get())) * dRecvCostUnit;
+		recvCost = pci->Rows() * pci->Width() * dRecvCostUnit;
 	}
 	else if (COperator::EopPhysicalMotionGather == op_id)
 	{
@@ -1229,6 +1206,25 @@ CCostModelGPDB::CostMotion
 		recvCost
 	));
 
+	if(COperator::EopPhysicalMotionHashDistribute == op_id)
+	{
+		CPhysicalMotion *motion = CPhysicalMotion::PopConvert(exprhdl.Pop());
+		CColRefSet *columns = motion->Pds()->PcrsUsed(mp);
+		CColRefArray *columns_array = columns->Pdrgpcr(mp);
+		CDouble ndv = 1;
+		for (ULONG i = 0; i < columns_array->Size(); ++i)
+		{
+			CColRef *col = (*columns_array)[i];
+			ndv = ndv * pci->Pcstats()->GetNDVs(col);
+		}
+		columns->Release();
+		columns_array->Release();
+		if (ndv < pcmgpdb->UlHosts())
+		{
+			CDouble RedistributePenalizationFactor = 100000000000000.0;
+			costLocal = costLocal + CCost(RedistributePenalizationFactor);
+		}
+	}
 
 	if(COperator::EopPhysicalMotionBroadcast == op_id)
 	{
