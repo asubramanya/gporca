@@ -215,11 +215,37 @@ CJoinOrderGreedy::PexprExpand()
 
 			// combine component with current result and derive stats
 			CJoinOrder::SComponent *pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
-			if(CUtils::FCrossJoin(pcompTemp->m_pexpr) && 1 < m_ulNumUsedEdges)
+			// if the resulting expression is a cross join, then we should first
+			// check if there are opportunites for joining m_pcompResult with 
+			// other relations which will not result in cross join.
+			if(CUtils::FCrossJoin(pcompTemp->m_pexpr))
 			{
-				pcompTemp->Release();
-				continue;
+				// iterate over all the unused edges and identify if there are
+				// any edges which can avoid a cross join
+				BOOL has_other_edges = false;
+				for (ULONG ul = 0; ul < m_ulEdges && !has_other_edges; ul++)
+				{
+					SEdge *pedge = m_rgpedge[ul];
+					if (!pedge->m_fUsed)
+					{
+						CBitSet *pTempEdge = GPOS_NEW(m_mp) CBitSet(m_mp, *(pedge->m_pbs));
+						pTempEdge->Intersection(m_pcompResult->m_pbs);
+						if (pTempEdge->Size() > 0)
+						{
+							has_other_edges = true;
+						}
+						pTempEdge->Release();
+					}
+				}
+				// if there are other edges which can avoid the current cross
+				// join, skip this alternative.
+				if (has_other_edges)
+				{
+					pcompTemp->Release();
+					continue;
+				}
 			}
+
 			DeriveStats(pcompTemp->m_pexpr);
 			CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
 
