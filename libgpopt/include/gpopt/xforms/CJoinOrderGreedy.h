@@ -35,7 +35,7 @@ namespace gpopt
 			// result component
 			SComponent *m_pcompResult;
 
-			ULONG m_ulNumUsedEdges;
+			ULONG m_ulNumEdgesRemaining;
 
 			// mark edges used by result component
 			void MarkUsedEdges();

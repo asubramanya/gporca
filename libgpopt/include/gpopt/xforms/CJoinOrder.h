@@ -74,6 +74,9 @@ namespace gpopt
 				// cover
 				CBitSet *m_pbs;
 				
+				// Edges associated with this component
+				CBitSet *m_edge_set;
+
 				// associated expression
 				CExpression *m_pexpr;
 				
@@ -84,7 +87,7 @@ namespace gpopt
 				SComponent(IMemoryPool *mp, CExpression *pexpr);
 				
 				// ctor
-				SComponent(CExpression *pexpr, CBitSet *pbs);
+				SComponent(CExpression *pexpr, CBitSet *pbs, CBitSet *edge_set);
 
 				// dtor
 				~SComponent();

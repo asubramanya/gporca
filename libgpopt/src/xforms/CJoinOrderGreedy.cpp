@@ -47,7 +47,7 @@ CJoinOrderGreedy::CJoinOrderGreedy
 	CJoinOrder(pmp, pdrgpexprComponents, pdrgpexprConjuncts),
 	m_pcompResult(NULL)
 {
-	m_ulNumUsedEdges = m_ulEdges;
+	m_ulNumEdgesRemaining = m_ulEdges;
 #ifdef GPOS_DEBUG
 	for (ULONG ul = 0; ul < m_ulComps; ul++)
 	{
@@ -111,7 +111,7 @@ CJoinOrderGreedy::MarkUsedEdges()
 			if ((*pdrgpexpr)[ulPred] == pedge->m_pexpr)
 			{
 				pedge->m_fUsed = true;
-				m_ulNumUsedEdges--;
+				m_ulNumEdgesRemaining--;
 			}
 		}
 	}
@@ -171,7 +171,6 @@ CJoinOrderGreedy::GetStartingJoins()
 
 }
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CJoinOrderGreedy::PexprExpand
@@ -204,71 +203,110 @@ CJoinOrderGreedy::PexprExpand()
 		SComponent *pcompBest = NULL; // best component to be added to current result
 		SComponent *pcompBestResult = NULL; // result after adding best component
 
-		for (ULONG ul = 0; ul < m_ulComps; ul++)
+		CBitSetIter edge_iter(*(m_pcompResult->m_edge_set));
+		CBitSet *b = GPOS_NEW(m_mp) CBitSet(m_mp);
+
+		//GetConnectedNodes();
+
+		// Compute list of connected nodes of current join graph
+		while (edge_iter.Advance())
 		{
-			SComponent *pcompCurrent = m_rgpcomp[ul];
-			if (pcompCurrent->m_fUsed)
+			SEdge *edge = m_rgpedge[edge_iter.Bit()];
+			if (!edge->m_fUsed)
 			{
-				// used components are already included in current result
-				continue;
+				b->Union(edge->m_pbs);
+				b->Difference(m_pcompResult->m_pbs);
 			}
-
-			// combine component with current result and derive stats
-			CJoinOrder::SComponent *pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
-			// if the resulting expression is a cross join, then we should first
-			// check if there are opportunites for joining m_pcompResult with 
-			// other relations which will not result in cross join.
-			if(CUtils::FCrossJoin(pcompTemp->m_pexpr))
-			{
-				// iterate over all the unused edges and identify if there are
-				// any edges which can avoid a cross join
-				BOOL has_other_edges = false;
-				for (ULONG ul = 0; ul < m_ulEdges && !has_other_edges; ul++)
-				{
-					SEdge *pedge = m_rgpedge[ul];
-					if (!pedge->m_fUsed)
-					{
-						CBitSet *pTempEdge = GPOS_NEW(m_mp) CBitSet(m_mp, *(pedge->m_pbs));
-						pTempEdge->Intersection(m_pcompResult->m_pbs);
-						if (pTempEdge->Size() > 0)
-						{
-							has_other_edges = true;
-						}
-						pTempEdge->Release();
-					}
-				}
-				// if there are other edges which can avoid the current cross
-				// join, skip this alternative.
-				if (has_other_edges)
-				{
-					pcompTemp->Release();
-					continue;
-				}
-			}
-
-			DeriveStats(pcompTemp->m_pexpr);
-			CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
-
-			if (NULL == pcompBestResult || dRows < dMinRows)
-			{
-				pcompBest = pcompCurrent;
-				dMinRows = dRows;
-				pcompTemp->AddRef();
-				CRefCount::SafeRelease(pcompBestResult);
-				pcompBestResult = pcompTemp;
-			}
-			pcompTemp->Release();
 		}
-		GPOS_ASSERT(NULL != pcompBestResult);
 
-		// mark best component as used
-		pcompBest->m_fUsed = true;
-		m_pcompResult->Release();
-		m_pcompResult = pcompBestResult;
+		SComponent *pcompTemp = NULL;
+		SComponent *pcompCurrent = NULL;
+		ULONG best_comp_idx;
 
-		// mark used edges to avoid including them multiple times
-		MarkUsedEdges();
-		ulCoveredComps++;
+		// If candidate nodes set is non empty
+		if (b->Size() > 0)
+		{
+			// Until we use all the candidate nodes in the join graph
+			while (b->Size() > 0)
+			{
+				// Pick the node which will give the lowest cardinality when joined with the resultant join graph
+				CBitSetIter comp_iter(*b);
+				pcompBestResult = NULL;
+				pcompBest = NULL;
+				while (comp_iter.Advance())
+				{
+					pcompCurrent = m_rgpcomp[comp_iter.Bit()];
+					pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
+
+					//GetBestComponent()
+					DeriveStats(pcompTemp->m_pexpr);
+					CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
+
+					if (NULL == pcompBestResult || dRows < dMinRows)
+					{
+						dMinRows = dRows;
+						best_comp_idx = comp_iter.Bit();
+						pcompTemp->AddRef();
+						CRefCount::SafeRelease(pcompBestResult);
+						pcompBest = pcompCurrent;
+						pcompBestResult = pcompTemp;
+					}
+					pcompTemp->Release();
+				}
+
+				GPOS_ASSERT(NULL != pcompBestResult);
+
+				//MarBestComponentAsUsed()
+				// mark best component as used
+				pcompBest->m_fUsed = true;
+				m_pcompResult->Release();
+				m_pcompResult = pcompBestResult;
+
+				MarkUsedEdges();
+				ulCoveredComps++;
+
+				b->ExchangeClear(best_comp_idx);
+			}
+		}
+		else
+		{
+			// Pick any cross joins if they exist
+			pcompBestResult = NULL;
+			pcompBest = NULL;
+			for (ULONG ul = 0; ul < m_ulComps; ul++)
+			{
+				pcompCurrent = m_rgpcomp[ul];
+				if (!pcompCurrent->m_fUsed)
+				{
+					//GetBestComponent()
+					pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
+
+					DeriveStats(pcompTemp->m_pexpr);
+					CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
+
+					if (NULL == pcompBestResult || dRows < dMinRows)
+					{
+						dMinRows = dRows;
+						best_comp_idx = ul;
+						pcompTemp->AddRef();
+						CRefCount::SafeRelease(pcompBestResult);
+						pcompBest = pcompCurrent;
+						pcompBestResult = pcompTemp;
+					}
+					pcompTemp->Release();
+				}
+			}
+
+			//MarBestComponentAsUsed()
+			pcompBest->m_fUsed = true;
+			m_pcompResult->Release();
+			m_pcompResult = pcompBestResult;
+			// mark used edges to avoid including them multiple times
+			MarkUsedEdges();
+			ulCoveredComps++;
+		}
+		b->Release();
+
 	}
 	GPOS_ASSERT(NULL != m_pcompResult->m_pexpr);
 
