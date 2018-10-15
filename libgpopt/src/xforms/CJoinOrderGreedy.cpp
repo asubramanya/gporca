@@ -243,6 +243,7 @@ CJoinOrderGreedy::PexprExpand()
 			// result in minimal cardinality
 			GetBestJoin(dMinRows, &pcompBest, &pcompBestResult, best_comp_idx, components_set);
 			UpdateResults(pcompBest, pcompBestResult);
+			ulCoveredComps++;
 		}
 		candidate_comp->Release();
 
@@ -273,7 +274,7 @@ CJoinOrderGreedy::UpdateResults
 }
 
 /*
- * Get the best result component by finding the component
+ * Get the best resulting component by finding the component
  * which will minimize the cardinality
  */
 void
@@ -312,23 +313,25 @@ CJoinOrderGreedy::GetBestJoin
 			pcompTemp->Release();
 		}
 	}
-	GPOS_ASSERT(NULL != pcompBestResult);
+	GPOS_ASSERT(NULL != *pcompBestResult);
 }
 
 /*
- * Get components connected via an edge to the result join graph
+ * Get components connected via an edge to the result join component
  */
 CBitSet*
 CJoinOrderGreedy::GetJoinCandidateComponents()
 {
-	CBitSetIter iter(*(m_pcompResult->m_edge_set));
+	// iterator over index of edges in m_rgpedge array associated with this component
+	CBitSetIter edges_iter(*(m_pcompResult->m_edge_set));
 	CBitSet *candidate_nodes = GPOS_NEW(m_mp) CBitSet(m_mp);
 	
-	while (iter.Advance())
+	while (edges_iter.Advance())
 	{
-		SEdge *edge = m_rgpedge[iter.Bit()];
+		SEdge *edge = m_rgpedge[edges_iter.Bit()];
 		if (!edge->m_fUsed)
 		{
+			// components connected via the edges
 			candidate_nodes->Union(edge->m_pbs);
 			candidate_nodes->Difference(m_pcompResult->m_pbs);
 		}

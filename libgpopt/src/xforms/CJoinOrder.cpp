@@ -338,6 +338,7 @@ CJoinOrder::PcompCombine
 	pbs->Union(pcompOuter->m_pbs);
 	pbs->Union(pcompInner->m_pbs);
 
+	// edges connecting with the current component
 	edge_set->Union(pcompOuter->m_edge_set);
 	edge_set->Union(pcompInner->m_edge_set);
 
