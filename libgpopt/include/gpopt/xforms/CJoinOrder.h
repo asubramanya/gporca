@@ -74,7 +74,7 @@ namespace gpopt
 				// cover
 				CBitSet *m_pbs;
 				
-				// Edges associated with this component
+				// edges associated with this component
 				CBitSet *m_edge_set;
 
 				// associated expression

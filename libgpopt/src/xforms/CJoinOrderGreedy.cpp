@@ -189,14 +189,17 @@ CJoinOrderGreedy::PexprExpand()
 
 	if(NULL != m_pcompResult)
 	{
+		// found atleast one non cross join
 		ulCoveredComps = 2;
 		MarkUsedEdges();
 	}
 	else
 	{
+		// if every join combination is a cross join
 		m_pcompResult = GPOS_NEW(m_mp) SComponent(m_mp, NULL /*pexpr*/);
 	}
 	
+	// create a bitset for all the components
 	CBitSet *components_set = GPOS_NEW(m_mp) CBitSet(m_mp);
 	for (ULONG ul = 0; ul < m_ulComps; ul++)
 	{
@@ -205,34 +208,43 @@ CJoinOrderGreedy::PexprExpand()
 	
 	while (ulCoveredComps < m_ulComps)
 	{
-		CBitSet *candidate_nodes = GetCandidateNodes();
+		// get a list of components which can be joined with m_pcompResult
+		CBitSet *candidate_comp = GetJoinCandidateComponents();
+
 		SComponent *pcompBest = NULL; // best component to be added to current result
 		SComponent *pcompBestResult = NULL; // result after adding best component
 		CDouble *dMinRows = GPOS_NEW(m_mp) CDouble(0.0);
+		// index for the best component in the component array
 		ULONG *best_comp_idx = (ULONG *) GPOS_NEW(m_mp) ULONG(gpos::ulong_max);
 
-		// If candidate nodes set is non empty
-		if (candidate_nodes->Size() > 0)
+		// if there are components available which can be joined with m_pcompResult
+		// avoiding cross joins
+		if (candidate_comp->Size() > 0)
 		{
-			// Use all the candidate nodes in the join graph to create the join
-			while (candidate_nodes->Size() > 0)
+			// continue iterating over all the candidate components until the
+			// entire set is evaluated
+			while (candidate_comp->Size() > 0)
 			{
 				pcompBestResult = NULL;
 				pcompBest = NULL;
-				GetJoin(dMinRows, &pcompBest, &pcompBestResult, best_comp_idx, candidate_nodes);
+				// pick the component which will give the minimal cardinality
+				GetBestJoin(dMinRows, &pcompBest, &pcompBestResult, best_comp_idx, candidate_comp);
 				UpdateResults(pcompBest, pcompBestResult);
 				ulCoveredComps++;
 
-				candidate_nodes->ExchangeClear(*best_comp_idx);
+				// remove the component picked in this iteration from the
+				// candidate component set
+				candidate_comp->ExchangeClear(*best_comp_idx);
 			}
 		}
 		else
 		{
-			GetJoin(dMinRows, &pcompBest, &pcompBestResult, best_comp_idx, components_set);
+			// only cross joins are available. pick the unused component which will
+			// result in minimal cardinality
+			GetBestJoin(dMinRows, &pcompBest, &pcompBestResult, best_comp_idx, components_set);
 			UpdateResults(pcompBest, pcompBestResult);
-			ulCoveredComps++;
 		}
-		candidate_nodes->Release();
+		candidate_comp->Release();
 
 		GPOS_DELETE(dMinRows);
 		GPOS_DELETE(best_comp_idx);
@@ -260,19 +272,23 @@ CJoinOrderGreedy::UpdateResults
 	MarkUsedEdges();
 }
 
+/*
+ * Get the best result component by finding the component
+ * which will minimize the cardinality
+ */
 void
-CJoinOrderGreedy::GetJoin
+CJoinOrderGreedy::GetBestJoin
 	(
 	 CDouble *dMinRows,
 	 SComponent **pcompBest,
 	 SComponent **pcompBestResult,
 	 ULONG *best_comp_idx,
-	 CBitSet *candidate_nodes
+	 CBitSet *candidate_comp
 	)
 {
 	GPOS_ASSERT(dMinRows);
 	
-	CBitSetIter iter(*candidate_nodes);
+	CBitSetIter iter(*candidate_comp);
 	while (iter.Advance())
 	{
 		SComponent *pcompCurrent = m_rgpcomp[iter.Bit()];
@@ -283,7 +299,7 @@ CJoinOrderGreedy::GetJoin
 			DeriveStats(pcompTemp->m_pexpr);
 			CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
 			
-			// Pick the node which will give the lowest cardinality when joined with the result join graph
+			// pick the component which will give the lowest cardinality
 			if (NULL == *pcompBestResult || dRows < *dMinRows)
 			{
 				*dMinRows = dRows;
@@ -299,8 +315,11 @@ CJoinOrderGreedy::GetJoin
 	GPOS_ASSERT(NULL != pcompBestResult);
 }
 
+/*
+ * Get components connected via an edge to the result join graph
+ */
 CBitSet*
-CJoinOrderGreedy::GetCandidateNodes()
+CJoinOrderGreedy::GetJoinCandidateComponents()
 {
 	CBitSetIter iter(*(m_pcompResult->m_edge_set));
 	CBitSet *candidate_nodes = GPOS_NEW(m_mp) CBitSet(m_mp);

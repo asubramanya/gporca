@@ -61,25 +61,25 @@ namespace gpopt
 			virtual
 			CExpression *PexprExpand();
 		
-		void
-		GetJoin
-		(
-		 CDouble *dMinRows,
-		 SComponent **pcompBest,
-		 SComponent **pcompBestResult,
-		 ULONG *best_comp_idx,
-		 CBitSet *candidate_nodes
-		 );
+			void
+			GetBestJoin
+				(
+				CDouble *dMinRows,
+				SComponent **pcompBest,
+				SComponent **pcompBestResult,
+				ULONG *best_comp_idx,
+				CBitSet *candidate_nodes
+				);
 		
-		void
-		UpdateResults
-		(
-		 SComponent *pcompBest,
-		 SComponent *pcompBestResult
-		 );
+			void
+			UpdateResults
+				(
+				SComponent *pcompBest,
+				SComponent *pcompBestResult
+				);
 		
-		CBitSet*
-		GetCandidateNodes();
+			CBitSet*
+			GetJoinCandidateComponents();
 
 	}; // class CJoinOrderGreedy
 
