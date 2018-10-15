@@ -60,6 +60,26 @@ namespace gpopt
 			// main handler
 			virtual
 			CExpression *PexprExpand();
+		
+		void
+		GetJoin
+		(
+		 CDouble *dMinRows,
+		 SComponent **pcompBest,
+		 SComponent **pcompBestResult,
+		 ULONG *best_comp_idx,
+		 CBitSet *candidate_nodes
+		 );
+		
+		void
+		UpdateResults
+		(
+		 SComponent *pcompBest,
+		 SComponent *pcompBestResult
+		 );
+		
+		CBitSet*
+		GetCandidateNodes();
 
 	}; // class CJoinOrderGreedy
 

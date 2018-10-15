@@ -196,124 +196,126 @@ CJoinOrderGreedy::PexprExpand()
 	{
 		m_pcompResult = GPOS_NEW(m_mp) SComponent(m_mp, NULL /*pexpr*/);
 	}
-
+	
+	CBitSet *components_set = GPOS_NEW(m_mp) CBitSet(m_mp);
+	for (ULONG ul = 0; ul < m_ulComps; ul++)
+	{
+		components_set->ExchangeSet(ul);
+	}
+	
 	while (ulCoveredComps < m_ulComps)
 	{
-		CDouble dMinRows(0.0);
+		CBitSet *candidate_nodes = GetCandidateNodes();
 		SComponent *pcompBest = NULL; // best component to be added to current result
 		SComponent *pcompBestResult = NULL; // result after adding best component
-
-		CBitSetIter edge_iter(*(m_pcompResult->m_edge_set));
-		CBitSet *b = GPOS_NEW(m_mp) CBitSet(m_mp);
-
-		//GetConnectedNodes();
-
-		// Compute list of connected nodes of current join graph
-		while (edge_iter.Advance())
-		{
-			SEdge *edge = m_rgpedge[edge_iter.Bit()];
-			if (!edge->m_fUsed)
-			{
-				b->Union(edge->m_pbs);
-				b->Difference(m_pcompResult->m_pbs);
-			}
-		}
-
-		SComponent *pcompTemp = NULL;
-		SComponent *pcompCurrent = NULL;
-		ULONG best_comp_idx;
+		CDouble *dMinRows = GPOS_NEW(m_mp) CDouble(0.0);
+		ULONG *best_comp_idx = (ULONG *) GPOS_NEW(m_mp) ULONG(gpos::ulong_max);
 
 		// If candidate nodes set is non empty
-		if (b->Size() > 0)
+		if (candidate_nodes->Size() > 0)
 		{
-			// Until we use all the candidate nodes in the join graph
-			while (b->Size() > 0)
+			// Use all the candidate nodes in the join graph to create the join
+			while (candidate_nodes->Size() > 0)
 			{
-				// Pick the node which will give the lowest cardinality when joined with the resultant join graph
-				CBitSetIter comp_iter(*b);
 				pcompBestResult = NULL;
 				pcompBest = NULL;
-				while (comp_iter.Advance())
-				{
-					pcompCurrent = m_rgpcomp[comp_iter.Bit()];
-					pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
-
-					//GetBestComponent()
-					DeriveStats(pcompTemp->m_pexpr);
-					CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
-
-					if (NULL == pcompBestResult || dRows < dMinRows)
-					{
-						dMinRows = dRows;
-						best_comp_idx = comp_iter.Bit();
-						pcompTemp->AddRef();
-						CRefCount::SafeRelease(pcompBestResult);
-						pcompBest = pcompCurrent;
-						pcompBestResult = pcompTemp;
-					}
-					pcompTemp->Release();
-				}
-
-				GPOS_ASSERT(NULL != pcompBestResult);
-
-				//MarBestComponentAsUsed()
-				// mark best component as used
-				pcompBest->m_fUsed = true;
-				m_pcompResult->Release();
-				m_pcompResult = pcompBestResult;
-
-				MarkUsedEdges();
+				GetJoin(dMinRows, &pcompBest, &pcompBestResult, best_comp_idx, candidate_nodes);
+				UpdateResults(pcompBest, pcompBestResult);
 				ulCoveredComps++;
 
-				b->ExchangeClear(best_comp_idx);
+				candidate_nodes->ExchangeClear(*best_comp_idx);
 			}
 		}
 		else
 		{
-			// Pick any cross joins if they exist
-			pcompBestResult = NULL;
-			pcompBest = NULL;
-			for (ULONG ul = 0; ul < m_ulComps; ul++)
-			{
-				pcompCurrent = m_rgpcomp[ul];
-				if (!pcompCurrent->m_fUsed)
-				{
-					//GetBestComponent()
-					pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
-
-					DeriveStats(pcompTemp->m_pexpr);
-					CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
-
-					if (NULL == pcompBestResult || dRows < dMinRows)
-					{
-						dMinRows = dRows;
-						best_comp_idx = ul;
-						pcompTemp->AddRef();
-						CRefCount::SafeRelease(pcompBestResult);
-						pcompBest = pcompCurrent;
-						pcompBestResult = pcompTemp;
-					}
-					pcompTemp->Release();
-				}
-			}
-
-			//MarBestComponentAsUsed()
-			pcompBest->m_fUsed = true;
-			m_pcompResult->Release();
-			m_pcompResult = pcompBestResult;
-			// mark used edges to avoid including them multiple times
-			MarkUsedEdges();
+			GetJoin(dMinRows, &pcompBest, &pcompBestResult, best_comp_idx, components_set);
+			UpdateResults(pcompBest, pcompBestResult);
 			ulCoveredComps++;
 		}
-		b->Release();
+		candidate_nodes->Release();
 
+		GPOS_DELETE(dMinRows);
+		GPOS_DELETE(best_comp_idx);
 	}
+	components_set->Release();
 	GPOS_ASSERT(NULL != m_pcompResult->m_pexpr);
 
 	CExpression *pexprResult = m_pcompResult->m_pexpr;
 	pexprResult->AddRef();
 
 	return pexprResult;
+}
+
+void
+CJoinOrderGreedy::UpdateResults
+	(
+	 SComponent *pcompBest,
+	 SComponent *pcompBestResult
+	)
+{
+	pcompBest->m_fUsed = true;
+	m_pcompResult->Release();
+	m_pcompResult = pcompBestResult;
+	
+	MarkUsedEdges();
+}
+
+void
+CJoinOrderGreedy::GetJoin
+	(
+	 CDouble *dMinRows,
+	 SComponent **pcompBest,
+	 SComponent **pcompBestResult,
+	 ULONG *best_comp_idx,
+	 CBitSet *candidate_nodes
+	)
+{
+	GPOS_ASSERT(dMinRows);
+	
+	CBitSetIter iter(*candidate_nodes);
+	while (iter.Advance())
+	{
+		SComponent *pcompCurrent = m_rgpcomp[iter.Bit()];
+		if (!pcompCurrent->m_fUsed)
+		{
+			SComponent *pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
+			
+			DeriveStats(pcompTemp->m_pexpr);
+			CDouble dRows = pcompTemp->m_pexpr->Pstats()->Rows();
+			
+			// Pick the node which will give the lowest cardinality when joined with the result join graph
+			if (NULL == *pcompBestResult || dRows < *dMinRows)
+			{
+				*dMinRows = dRows;
+				pcompTemp->AddRef();
+				*best_comp_idx = iter.Bit();
+				CRefCount::SafeRelease(*pcompBestResult);
+				*pcompBest = pcompCurrent;
+				*pcompBestResult = pcompTemp;
+			}
+			pcompTemp->Release();
+		}
+	}
+	GPOS_ASSERT(NULL != pcompBestResult);
+}
+
+CBitSet*
+CJoinOrderGreedy::GetCandidateNodes()
+{
+	CBitSetIter iter(*(m_pcompResult->m_edge_set));
+	CBitSet *candidate_nodes = GPOS_NEW(m_mp) CBitSet(m_mp);
+	
+	while (iter.Advance())
+	{
+		SEdge *edge = m_rgpedge[iter.Bit()];
+		if (!edge->m_fUsed)
+		{
+			candidate_nodes->Union(edge->m_pbs);
+			candidate_nodes->Difference(m_pcompResult->m_pbs);
+		}
+	}
+	
+	return candidate_nodes;
 }
 
 // EOF
