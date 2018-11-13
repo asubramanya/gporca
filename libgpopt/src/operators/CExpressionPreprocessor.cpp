@@ -285,6 +285,7 @@ CExpressionPreprocessor::PexprUnnestScalarSubqueries
 			CExpression *pexprPrjList = (*pexprSubqChild)[1];
 			GPOS_ASSERT(1 == pexprPrjList->Arity());
 
+
 			CExpression *pexprPrjElem = (*pexprPrjList)[0];
 			CExpression *pexprInnerSubq = (*pexprPrjElem)[0];
 			GPOS_ASSERT(COperator::EopScalarSubquery == pexprInnerSubq->Pop()->Eopid());
@@ -2092,6 +2093,14 @@ CExpressionPreprocessor::PexprExistWithPredFromINSubq
 		{
 			return pexprNew;
 		}
+
+		const CColRef *pcrsAny = CScalarSubqueryAny::PopConvert(pop)->Pcr();
+		CColRefSet *pcrsRelationalChild = CDrvdPropRelational::GetRelationalProperties((*pexpr)[0]->PdpDerive())->PcrsOutput();
+		if (pcrsRelationalChild->FMember(pcrsAny))
+		{
+			return pexprNew;
+		}
+
 
 		CExpression *pexprNewConverted = ConvertInToSimpleExists(mp, pexprNew);
 		if (NULL == pexprNewConverted)
