@@ -2079,7 +2079,7 @@ CExpressionPreprocessor::PexprExistWithPredFromINSubq
 	}
 
 	CExpression *pexprNew = GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
-
+	CExpression *pexprNewConverted = NULL;
 	//Check if the inner is a SubqueryAny
 	if (CUtils::FAnySubquery(pop))
 	{
@@ -2087,22 +2087,31 @@ CExpressionPreprocessor::PexprExistWithPredFromINSubq
 
 		// we do the conversion if the project list has an outer reference and
 		// it does not include any column from the relational child.
-		if (COperator::EopLogicalProject != pexprLogicalProject->Pop()->Eopid() ||
-			!CUtils::HasOuterRefs(pexprLogicalProject) ||
-			CUtils::FInnerRefInProjectList(pexprLogicalProject))
+		if (COperator::EopLogicalProject == pexprLogicalProject->Pop()->Eopid())
 		{
-			return pexprNew;
+			if(!CUtils::HasOuterRefs(pexprLogicalProject) ||
+			   CUtils::FInnerRefInProjectList(pexprLogicalProject))
+			{
+				return pexprNew;
+			}
+			else {
+				pexprNewConverted = ConvertInToSimpleExists(mp, pexprNew);
+			}
+		}
+		else
+		{
+			const CColRef *pcrsAny = CScalarSubqueryAny::PopConvert(pop)->Pcr();
+			CColRefSet *pcrsRelationalChild = CDrvdPropRelational::GetRelationalProperties((*pexpr)[0]->PdpDerive())->PcrsOutput();
+			if (pcrsRelationalChild->FMember(pcrsAny))
+			{
+				return pexprNew;
+			}
+//			else
+//			{
+//				pexprNewConverted = ConvertNonProjectInToSimpleExists(mp, pexprNew);
+//			}
 		}
 
-		const CColRef *pcrsAny = CScalarSubqueryAny::PopConvert(pop)->Pcr();
-		CColRefSet *pcrsRelationalChild = CDrvdPropRelational::GetRelationalProperties((*pexpr)[0]->PdpDerive())->PcrsOutput();
-		if (pcrsRelationalChild->FMember(pcrsAny))
-		{
-			return pexprNew;
-		}
-
-
-		CExpression *pexprNewConverted = ConvertInToSimpleExists(mp, pexprNew);
 		if (NULL == pexprNewConverted)
 		{
 			return pexprNew;
