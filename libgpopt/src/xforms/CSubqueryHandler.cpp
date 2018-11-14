@@ -1641,6 +1641,17 @@ CSubqueryHandler::FRemoveExistentialSubquery
 				// add a limit operator on top of the inner child if the subquery does not have
 				// any outer references. Adding Limit for the correlated case hinders pulling up
 				// predicates into an EXISTS join
+
+				if (COperator::EopLogicalLimit == pexprInner->Pop()->Eopid() &&
+						CUtils::FHasZeroOffset(pexprInner))
+				{
+					// Remove superfluous limit before placing another limit on
+					// top of it.
+					CExpression *temp = pexprInner;
+					pexprInner = (*pexprInner)[0];
+					pexprInner->AddRef();
+					temp->Release();
+				}
 				pexprInner = CUtils::PexprLimit(mp, pexprInner, 0, 1);
 			}
 
