@@ -131,8 +131,8 @@ namespace gpopt
 
 			// helper function to rewrite IN query to simple EXISTS with a predicate
 			static
-			CExpression *ConvertInToSimpleExists (IMemoryPool *mp, CExpression *pexpr);
-
+			CExpression *ConvertInToSimpleExists (IMemoryPool *mp, CExpression *pexpr, BOOL subq_has_project_list);
+		
 			// rewrite IN subquery to EXIST subquery with a predicate
 			static
 			CExpression *PexprExistWithPredFromINSubq(IMemoryPool *mp, CExpression *pexpr);

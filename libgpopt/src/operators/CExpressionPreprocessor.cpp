@@ -1996,18 +1996,17 @@ CExpressionPreprocessor::PexprReorderScalarCmpChildren
 	return GPOS_NEW(mp) CExpression(mp, pop, pdrgpexpr);
 }
 
-// converts IN subquery with a project list to a predicate AND an EXISTS subquery
+// converts IN subquery to a predicate AND an EXISTS subquery
 CExpression *
 CExpressionPreprocessor::ConvertInToSimpleExists
 	(
 	IMemoryPool *mp,
-	CExpression *pexpr
+	CExpression *pexpr,
+	BOOL subq_has_project_list
 	)
 {
 	COperator *pop = pexpr->Pop();
-	CExpression *pexprLogicalProject = (*pexpr)[0];
-
-	GPOS_ASSERT(COperator::EopLogicalProject == pexprLogicalProject->Pop()->Eopid());
+	CExpression *pexprChild = (*pexpr)[0];
 
 	// generate scalarOp expression by using column referance of the IN subquery's inner
 	// child's column referance as well as the expression extracted above from the
@@ -2023,20 +2022,36 @@ CExpressionPreprocessor::ConvertInToSimpleExists
 	// (a,a) in (select foo.a, foo.a from ...) ,
 	// we only extract the first expression under the first project element in the
 	// project list and make it as the right operand to the scalar operation.
-	CExpression *pexprRight = CUtils::PNthProjectElementExpr(pexprLogicalProject, 0);
+	CExpression *pexprRight = NULL;
+	if (subq_has_project_list)
+	{
+		pexprRight = CUtils::PNthProjectElementExpr(pexprChild, 0);
+		pexprRight->AddRef();
+	}
+	else
+	{
+		pexprRight = CUtils::PexprScalarIdent(mp, CScalarSubqueryAny::PopConvert(pop)->Pcr());
+	}
 
 	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 	IMDId *mdid = CScalarSubqueryAny::PopConvert(pop)->MdIdOp();
 	const CWStringConst *str = md_accessor->RetrieveScOp(mdid)->Mdname().GetMDName();
 
 	mdid->AddRef();
-	pexprRight->AddRef();
 	pexprLeft->AddRef();
 
 	CExpression *pexprScalarOp = CUtils::PexprScalarCmp(mp, pexprLeft, pexprRight, *str, mdid);
 
 	// EXISTS subquery becomes the logical projects relational child.
-	CExpression *pexprSubqOfExists = (*pexprLogicalProject)[0];
+	CExpression *pexprSubqOfExists = NULL;
+	if (subq_has_project_list)
+	{
+		pexprSubqOfExists = (*pexprChild)[0];
+	}
+	else
+	{
+		pexprSubqOfExists = pexprChild;
+	}
 	pexprSubqOfExists->AddRef();
 	CExpression *pexprScalarSubqExists = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarSubqueryExists(mp), pexprSubqOfExists);
 
@@ -2084,18 +2099,15 @@ CExpressionPreprocessor::PexprExistWithPredFromINSubq
 	if (CUtils::FAnySubquery(pop))
 	{
 		CExpression *pexprLogicalProject = (*pexprNew)[0];
-
+		BOOL subq_has_project_list = COperator::EopLogicalProject == pexprLogicalProject->Pop()->Eopid();
 		// we do the conversion if the project list has an outer reference and
 		// it does not include any column from the relational child.
-		if (COperator::EopLogicalProject == pexprLogicalProject->Pop()->Eopid())
+		if (subq_has_project_list)
 		{
 			if(!CUtils::HasOuterRefs(pexprLogicalProject) ||
 			   CUtils::FInnerRefInProjectList(pexprLogicalProject))
 			{
 				return pexprNew;
-			}
-			else {
-				pexprNewConverted = ConvertInToSimpleExists(mp, pexprNew);
 			}
 		}
 		else
@@ -2106,11 +2118,9 @@ CExpressionPreprocessor::PexprExistWithPredFromINSubq
 			{
 				return pexprNew;
 			}
-//			else
-//			{
-//				pexprNewConverted = ConvertNonProjectInToSimpleExists(mp, pexprNew);
-//			}
 		}
+
+		pexprNewConverted = ConvertInToSimpleExists(mp, pexprNew, subq_has_project_list);
 
 		if (NULL == pexprNewConverted)
 		{
