@@ -2046,11 +2046,13 @@ CExpressionPreprocessor::ConvertInToSimpleExists
 	CExpression *pexprSubqOfExists = NULL;
 	if (subq_has_project_list)
 	{
-		pexprSubqOfExists = (*pexprChild)[0];
+		CExpression *pexprLimit = CUtils::PexprLimit(mp, (*pexprChild)[0], 0, 1);
+		pexprSubqOfExists = pexprLimit;
 	}
 	else
 	{
-		pexprSubqOfExists = pexprChild;
+		CExpression *pexprLimit = CUtils::PexprLimit(mp, pexprChild, 0, 1);
+		pexprSubqOfExists = pexprLimit;
 	}
 	pexprSubqOfExists->AddRef();
 	CExpression *pexprScalarSubqExists = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarSubqueryExists(mp), pexprSubqOfExists);

@@ -1642,16 +1642,16 @@ CSubqueryHandler::FRemoveExistentialSubquery
 				// any outer references. Adding Limit for the correlated case hinders pulling up
 				// predicates into an EXISTS join
 
-				if (COperator::EopLogicalLimit == pexprInner->Pop()->Eopid() &&
-						CUtils::FHasZeroOffset(pexprInner))
-				{
-					// Remove superfluous limit before placing another limit on
-					// top of it.
-					CExpression *temp = pexprInner;
-					pexprInner = (*pexprInner)[0];
-					pexprInner->AddRef();
-					temp->Release();
-				}
+//				if (COperator::EopLogicalLimit == pexprInner->Pop()->Eopid() &&
+//						CUtils::FHasZeroOffset(pexprInner))
+//				{
+//					// Remove superfluous limit before placing another limit on
+//					// top of it.
+//					CExpression *temp = pexprInner;
+//					pexprInner = (*pexprInner)[0];
+//					pexprInner->AddRef();
+//					temp->Release();
+//				}
 				pexprInner = CUtils::PexprLimit(mp, pexprInner, 0, 1);
 			}
 
