@@ -174,10 +174,10 @@ IDatumStatisticsMappable::GetStatsDistanceFrom
 	{
 		// TODO: , May 1 2013, distance function for data types such as bpchar/varchar
 		// that require binary comparison
-		LINT l1 = this->GetLINTMapping();
-		LINT l2 = datum_cast->GetLINTMapping();
+		CDouble d1 = this->GetDoubleMapping();
+		CDouble d2 = datum_cast->GetDoubleMapping();
 
-		return fabs(CDouble(l1 - l2).Get());
+		return fabs((d1 - d2).Get());
 	}
 
 	if (is_lint_comparison)

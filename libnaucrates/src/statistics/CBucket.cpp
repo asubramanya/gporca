@@ -186,7 +186,7 @@ CBucket::GetOverlapPercentage
 
 	// general case, compute distance ratio
 	CDouble distance_upper = m_bucket_upper_bound->Distance(m_bucket_lower_bound);
-	GPOS_ASSERT(distance_upper > 0.0);
+	GPOS_ASSERT(distance_upper >= 0.0);
 	CDouble distance_middle = point->Distance(m_bucket_lower_bound);
 	GPOS_ASSERT(distance_middle >= 0.0);
 

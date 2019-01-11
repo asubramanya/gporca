@@ -487,7 +487,10 @@ CDatumGenericGPDB::MakePaddedDatum
 
 		// create a new datum
 		this->MDId()->AddRef();
-		CDatumGenericGPDB *datum_new = GPOS_NEW(m_mp) CDatumGenericGPDB
+		CDatumGenericGPDB *datum_new = NULL;
+
+		if (gpmd::CMDTypeGenericGPDB::IsTextRelatedType(this->MDId()))
+			datum_new = GPOS_NEW(m_mp) CDatumGenericGPDB
 													(
 													mp,
 													this->MDId(),
@@ -495,9 +498,22 @@ CDatumGenericGPDB::MakePaddedDatum
 													dest,
 													adjusted_col_width,
 													this->IsNull(),
-													this->GetLINTMapping(),
-													0 /* dValue */
+													0,
+													this->GetDoubleMapping() /* dValue */
 													);
+		else
+			datum_new = GPOS_NEW(m_mp) CDatumGenericGPDB
+													(
+													 mp,
+													 this->MDId(),
+													 this->TypeModifier(),
+													 dest,
+													 adjusted_col_width,
+													 this->IsNull(),
+													 this->GetLINTMapping(),
+													 0 /* dValue */
+													 );
+
 
 		// clean up the input byte array as the constructor creates a copy
 		GPOS_DELETE_ARRAY(dest);
