@@ -237,7 +237,7 @@ COstream::operator <<
 	const DOUBLE input_double
 	)
 {
-	return AppendFormat(GPOS_WSZ_LIT("%g"), input_double);
+	return AppendFormat(GPOS_WSZ_LIT("%0.50g"), input_double);
 }
 
 

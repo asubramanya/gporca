@@ -338,10 +338,12 @@ CDatumGenericGPDB::SupportsBinaryComp
 		)
 	const
 {
-	return ((MDId()->Equals(&CMDIdGPDB::m_mdid_bpchar)
-			|| MDId()->Equals(&CMDIdGPDB::m_mdid_varchar)
-			|| MDId()->Equals(&CMDIdGPDB::m_mdid_text))
-			&& (this->MDId()->Sysid().Equals(datum_other->MDId()->Sysid())));
+	//GPOS_ASSERT(datum_other);
+	if (datum_other)
+	{
+		
+	}
+	return false;
 }
 
 //---------------------------------------------------------------------------
@@ -489,30 +491,17 @@ CDatumGenericGPDB::MakePaddedDatum
 		this->MDId()->AddRef();
 		CDatumGenericGPDB *datum_new = NULL;
 
-		if (gpmd::CMDTypeGenericGPDB::IsTextRelatedType(this->MDId()))
-			datum_new = GPOS_NEW(m_mp) CDatumGenericGPDB
-													(
-													mp,
-													this->MDId(),
-													this->TypeModifier(),
-													dest,
-													adjusted_col_width,
-													this->IsNull(),
-													0,
-													this->GetDoubleMapping() /* dValue */
-													);
-		else
-			datum_new = GPOS_NEW(m_mp) CDatumGenericGPDB
-													(
-													 mp,
-													 this->MDId(),
-													 this->TypeModifier(),
-													 dest,
-													 adjusted_col_width,
-													 this->IsNull(),
-													 this->GetLINTMapping(),
-													 0 /* dValue */
-													 );
+		datum_new = GPOS_NEW(m_mp) CDatumGenericGPDB
+												(
+												 mp,
+												 this->MDId(),
+												 this->TypeModifier(),
+												 dest,
+												 adjusted_col_width,
+												 this->IsNull(),
+												 this->GetLINTMapping(),
+												 0 /* dValue */
+												 );
 
 
 		// clean up the input byte array as the constructor creates a copy

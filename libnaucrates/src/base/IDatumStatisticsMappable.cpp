@@ -70,7 +70,7 @@ IDatumStatisticsMappable::StatsAreEqual
 
 	CDouble d1 = this->GetDoubleMapping();
 	CDouble d2 = datum_cast->GetDoubleMapping();
-	return d1 == d2;
+	return d1 == d2 || (fabs((d1 - d2).Get()) == GPOS_FP_ABS_MIN);
 }
 
 //---------------------------------------------------------------------------
