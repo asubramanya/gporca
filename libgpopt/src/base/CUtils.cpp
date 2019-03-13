@@ -52,6 +52,7 @@
 #include "naucrates/md/CMDArrayCoerceCastGPDB.h"
 #include "naucrates/md/CMDIdScCmp.h"
 #include "naucrates/traceflags/traceflags.h"
+#include "naucrates/statistics/CStatsPredUtils.h"
 
 using namespace gpopt;
 using namespace gpmd;
