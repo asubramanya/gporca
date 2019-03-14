@@ -132,37 +132,37 @@ CStatistics::OsPrint
 	)
 	const
 {
-	os << "{" << std::endl;
-	os << "Rows = " << Rows() << std::endl;
-	os << "Rebinds = " << NumRebinds() << std::endl;
-
-	UlongToHistogramMapIter col_hist_mapping(m_colid_histogram_mapping);
-	while (col_hist_mapping.Advance())
-	{
-		ULONG colid = *(col_hist_mapping.Key());
-		os << "Col" << colid << ":" << std::endl;
-		const CHistogram *histogram = col_hist_mapping.Value();
-		histogram->OsPrint(os);
-		os << std::endl;
-	}
-
-	UlongToDoubleMapIter col_width_map_iterator(m_colid_width_mapping);
-	while (col_width_map_iterator.Advance())
-	{
-		ULONG colid = *(col_width_map_iterator.Key());
-		os << "Col" << colid << ":" << std::endl;
-		const CDouble *width = col_width_map_iterator.Value();
-		os << " width " << (*width) << std::endl;
-	}
-
-	const ULONG length = m_src_upper_bound_NDVs->Size();
-	for (ULONG i = 0; i < length; i++)
-	{
-		const CUpperBoundNDVs *upper_bound_NDVs = (*m_src_upper_bound_NDVs)[i];
-		upper_bound_NDVs->OsPrint(os);
-	}
-	os << "StatsEstimationRisk = " << StatsEstimationRisk() << std::endl;
-	os << "}" << std::endl;
+//	os << "{" << std::endl;
+//	os << "Rows = " << Rows() << std::endl;
+//	os << "Rebinds = " << NumRebinds() << std::endl;
+//
+//	UlongToHistogramMapIter col_hist_mapping(m_colid_histogram_mapping);
+//	while (col_hist_mapping.Advance())
+//	{
+//		ULONG colid = *(col_hist_mapping.Key());
+//		os << "Col" << colid << ":" << std::endl;
+//		const CHistogram *histogram = col_hist_mapping.Value();
+//		histogram->OsPrint(os);
+//		os << std::endl;
+//	}
+//
+//	UlongToDoubleMapIter col_width_map_iterator(m_colid_width_mapping);
+//	while (col_width_map_iterator.Advance())
+//	{
+//		ULONG colid = *(col_width_map_iterator.Key());
+//		os << "Col" << colid << ":" << std::endl;
+//		const CDouble *width = col_width_map_iterator.Value();
+//		os << " width " << (*width) << std::endl;
+//	}
+//
+//	const ULONG length = m_src_upper_bound_NDVs->Size();
+//	for (ULONG i = 0; i < length; i++)
+//	{
+//		const CUpperBoundNDVs *upper_bound_NDVs = (*m_src_upper_bound_NDVs)[i];
+//		upper_bound_NDVs->OsPrint(os);
+//	}
+//	os << "StatsEstimationRisk = " << StatsEstimationRisk() << std::endl;
+//	os << "}" << std::endl;
 
 	return os;
 }

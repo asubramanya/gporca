@@ -917,8 +917,12 @@ CCostModelGPDB::CostHashJoin
 	GPOS_ASSERT(0 < dHJHashingTupWidthSpillingCostUnit);
 
 	// get the number of columns used in join condition
-	CExpression *pexprJoinCond= exprhdl.PexprScalarChild(2);
-	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(pexprJoinCond->PdpDerive())->PcrsUsed();
+//	CExpression *pexprJoinCond= exprhdl.PexprScalarChild(2);
+	const ULONG arity = exprhdl.Arity();
+	
+	// exclude the implied predicates used in the join predicates
+	CExpression *join_pred_expr = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, exprhdl.PexprScalarChild(arity - 1), exprhdl);
+	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(join_pred_expr->PdpDerive())->PcrsUsed();
 	const ULONG ulColsUsed = pcrsUsed->Size();
 
 	// TODO 2014-03-14
