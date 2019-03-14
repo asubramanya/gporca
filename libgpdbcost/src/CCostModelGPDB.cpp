@@ -916,15 +916,22 @@ CCostModelGPDB::CostHashJoin
 	GPOS_ASSERT(0 < dHJFeedingTupWidthSpillingCostUnit);
 	GPOS_ASSERT(0 < dHJHashingTupWidthSpillingCostUnit);
 
-	// get the number of columns used in join condition
-//	CExpression *pexprJoinCond= exprhdl.PexprScalarChild(2);
+	// exclude the implied predicates used in the join condition,
+	// for columns coming from the inner child, the cost of the implied
+	// predicate column would already have been considered in the child
+	// cost
+	// for columns coming from the outer child, we should not double count
+	// them
+	// consider a query with join condition: t1.b = t2.b and t2.b = t3.b,
+	// here t1.b = t3.b will be an implied predicate which is generated
+	// for the join t1 Join (t2 Join t3)
+	// the cost of t3.b will already be considered when the join on t2 and
+	// t3 was performed, and the cost of t1.b should only be considered once.
 	const ULONG arity = exprhdl.Arity();
-	
-	// exclude the implied predicates used in the join predicates
 	CExpression *join_pred_expr = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, exprhdl.PexprScalarChild(arity - 1), exprhdl);
 	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(join_pred_expr->PdpDerive())->PcrsUsed();
 	const ULONG ulColsUsed = pcrsUsed->Size();
-	join_pred_expr->Release();
+	join_pred_expr->DbgPrint();
 
 	// TODO 2014-03-14
 	// currently, we hard coded a spilling memory threshold for judging whether hash join spills or not
