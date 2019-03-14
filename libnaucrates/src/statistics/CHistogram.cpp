@@ -120,33 +120,33 @@ CHistogram::OsPrint
 	)
 	const
 {
-//	os << std::endl << "[" << std::endl;
-//
-//	ULONG num_buckets = m_histogram_buckets->Size();
-//	for (ULONG bucket_index = 0; bucket_index < num_buckets; bucket_index++)
-//	{
-//		os << "b" << bucket_index << " = ";
-//		(*m_histogram_buckets)[bucket_index]->OsPrint(os);
-//		os << std::endl;
-//	}
-//	os << "]" << std::endl;
-//
-//	os << "Null fraction: " << m_null_freq << std::endl;
-//
-//	os << "Remaining NDV: " << m_distinct_remaining << std::endl;
-//
-//	os << "Remaining frequency: " << m_freq_remaining << std::endl;
-//
-//	if (m_skew_was_measured)
-//	{
-//		os << "Skew: " << m_skew << std::endl;
-//	}
-//	else
-//	{
-//		os << "Skew: not measured" << std::endl;
-//	}
-//
-//	os << "Was NDVs re-scaled Based on Row Estimate: " << m_NDVs_were_scaled << std::endl;
+	os << std::endl << "[" << std::endl;
+
+	ULONG num_buckets = m_histogram_buckets->Size();
+	for (ULONG bucket_index = 0; bucket_index < num_buckets; bucket_index++)
+	{
+		os << "b" << bucket_index << " = ";
+		(*m_histogram_buckets)[bucket_index]->OsPrint(os);
+		os << std::endl;
+	}
+	os << "]" << std::endl;
+
+	os << "Null fraction: " << m_null_freq << std::endl;
+
+	os << "Remaining NDV: " << m_distinct_remaining << std::endl;
+
+	os << "Remaining frequency: " << m_freq_remaining << std::endl;
+
+	if (m_skew_was_measured)
+	{
+		os << "Skew: " << m_skew << std::endl;
+	}
+	else
+	{
+		os << "Skew: not measured" << std::endl;
+	}
+
+	os << "Was NDVs re-scaled Based on Row Estimate: " << m_NDVs_were_scaled << std::endl;
 
 	return os;
 }
