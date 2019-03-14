@@ -924,6 +924,7 @@ CCostModelGPDB::CostHashJoin
 	CExpression *join_pred_expr = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, exprhdl.PexprScalarChild(arity - 1), exprhdl);
 	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(join_pred_expr->PdpDerive())->PcrsUsed();
 	const ULONG ulColsUsed = pcrsUsed->Size();
+	join_pred_expr->Release();
 
 	// TODO 2014-03-14
 	// currently, we hard coded a spilling memory threshold for judging whether hash join spills or not
