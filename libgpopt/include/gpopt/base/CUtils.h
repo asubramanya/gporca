@@ -548,6 +548,9 @@ namespace gpopt
 			// in the given colrefset
 			static
 			CColRefArray *PdrgpcrExcludeColumns(IMemoryPool *mp, CColRefArray *pdrgpcrOriginal, CColRefSet *pcrsExcluded);
+		
+			static
+			CColRefSetArray *PdrgpcrsCopyChildEquivClasses(IMemoryPool *mp, CExpression *pexpr);
 
 			//-------------------------------------------------------------------
 			// General helpers

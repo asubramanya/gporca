@@ -2311,6 +2311,53 @@ CPredicateUtils::PexprRemoveImpliedConjuncts
 	return PexprConjunction(mp, pdrgpexprNewConjuncts);
 }
 
+CExpression *
+CPredicateUtils::PexprRemoveImpliedConjuncts
+(
+ IMemoryPool *mp,
+ CExpression *pexprScalar,
+ CExpression *pexpr
+ )
+{
+	// extract equivalence classes from logical children
+	CColRefSetArray *pdrgpcrs = CUtils::PdrgpcrsCopyChildEquivClasses(mp, pexpr);
+	
+	// extract all the conjuncts
+	CExpressionArray *pdrgpexprConjuncts = PdrgpexprConjuncts(mp, pexprScalar);
+	const ULONG size = pdrgpexprConjuncts->Size();
+	CExpressionArray *pdrgpexprNewConjuncts = GPOS_NEW(mp) CExpressionArray(mp);
+	for (ULONG ul = 0; ul < size; ul++)
+	{
+		CExpression *pexprConj = (*pdrgpexprConjuncts)[ul];
+		if (FCheckPredicateImplication(pexprConj) && FImpliedPredicate(pexprConj, pdrgpcrs))
+		{
+			// skip implied conjunct
+			continue;
+		}
+		
+		// add predicate to current equivalence classes
+		CColRefSetArray *pdrgpcrsConj = NULL;
+		CConstraint *pcnstr = CConstraint::PcnstrFromScalarExpr(mp, pexprConj, &pdrgpcrsConj);
+		CRefCount::SafeRelease(pcnstr);
+		if (NULL != pdrgpcrsConj)
+		{
+			CColRefSetArray *pdrgpcrsMerged = CUtils::PdrgpcrsMergeEquivClasses(mp, pdrgpcrs, pdrgpcrsConj);
+			pdrgpcrs->Release();
+			pdrgpcrsConj->Release();
+			pdrgpcrs = pdrgpcrsMerged;
+		}
+		
+		// add conjunct to new conjuncts array
+		pexprConj->AddRef();
+		pdrgpexprNewConjuncts->Append(pexprConj);
+	}
+	
+	pdrgpexprConjuncts->Release();
+	pdrgpcrs->Release();
+	
+	return PexprConjunction(mp, pdrgpexprNewConjuncts);
+}
+
 // check if given correlations are valid for (anti)semi-joins;
 // we disallow correlations referring to inner child, since inner
 // child columns are not visible above (anti)semi-join

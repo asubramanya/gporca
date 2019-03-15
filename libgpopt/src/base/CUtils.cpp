@@ -2781,6 +2781,38 @@ CUtils::PdrgpcrsCopyChildEquivClasses
 	return pdrgpcrs;
 }
 
+CColRefSetArray *
+CUtils::PdrgpcrsCopyChildEquivClasses
+(
+ IMemoryPool *mp,
+ CExpression *pexpr
+ )
+{
+	CColRefSetArray *pdrgpcrs = GPOS_NEW(mp) CColRefSetArray(mp);
+	const ULONG arity = pexpr->Arity();
+	for (ULONG ul = 0; ul < arity - 1; ul++)
+	{
+			CExpression *pexprChild = (*pexpr)[ul];
+			CDrvdPropRelational *pdprel = CDrvdPropRelational::GetRelationalProperties(pexprChild->PdpDerive());
+			CColRefSetArray *pdrgpcrsChild = pdprel->Ppc()->PdrgpcrsEquivClasses();
+			
+			CColRefSetArray *pdrgpcrsChildCopy = GPOS_NEW(mp) CColRefSetArray(mp);
+			const ULONG size = pdrgpcrsChild->Size();
+			for (ULONG ulInner = 0; ulInner < size; ulInner++)
+			{
+				CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *(*pdrgpcrsChild)[ulInner]);
+				pdrgpcrsChildCopy->Append(pcrs);
+			}
+			
+			CColRefSetArray *pdrgpcrsMerged = PdrgpcrsMergeEquivClasses(mp, pdrgpcrs, pdrgpcrsChildCopy);
+			pdrgpcrsChildCopy->Release();
+			pdrgpcrs->Release();
+			pdrgpcrs = pdrgpcrsMerged;
+	}
+	
+	return pdrgpcrs;
+}
+
 // return a copy of the given array of columns, excluding the columns in the given colrefset
 CColRefArray *
 CUtils::PdrgpcrExcludeColumns
