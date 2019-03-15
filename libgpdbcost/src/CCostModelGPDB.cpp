@@ -1024,10 +1024,22 @@ CCostModelGPDB::CostIndexNLJoin
 	GPOS_ASSERT(0 < dJoinFeedingTupWidthCostUnit);
 	GPOS_ASSERT(0 < dJoinOutputTupCostUnit);
 
-	// get the number of columns used in join condition
-	CExpression *pexprJoinCond= exprhdl.PexprScalarChild(2);
-	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(pexprJoinCond->PdpDerive())->PcrsUsed();
+	// exclude the implied predicates used in the join condition,
+	// for columns coming from the inner child, the cost of the implied
+	// predicate column would already have been considered in the child
+	// cost
+	// for columns coming from the outer child, we should not double count
+	// them
+	// consider a query with join condition: t1.b = t2.b and t2.b = t3.b,
+	// here t1.b = t3.b will be an implied predicate which is generated
+	// for the join t1 Join (t2 Join t3)
+	// the cost of t3.b will already be considered when the join on t2 and
+	// t3 was performed, and the cost of t1.b should only be considered once.
+	const ULONG arity = exprhdl.Arity();
+	CExpression *join_pred_expr = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, exprhdl.PexprScalarChild(arity - 1), exprhdl);
+	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(join_pred_expr->PdpDerive())->PcrsUsed();
 	const ULONG ulColsUsed = pcrsUsed->Size();
+	join_pred_expr->Release();
 
 	// cost of Index apply contains three parts:
 	// 1. feeding outer tuples. This part is correlated with rows and width of outer tuples
@@ -1108,10 +1120,22 @@ CCostModelGPDB::CostNLJoin
 	GPOS_ASSERT(0 < dOutputTupCostUnit);
 	GPOS_ASSERT(0 < dNLJFactor);
 
-	// get the number of columns used in join condition
-	CExpression *pexprJoinCond= exprhdl.PexprScalarChild(2);
-	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(pexprJoinCond->PdpDerive())->PcrsUsed();
+	// exclude the implied predicates used in the join condition,
+	// for columns coming from the inner child, the cost of the implied
+	// predicate column would already have been considered in the child
+	// cost
+	// for columns coming from the outer child, we should not double count
+	// them
+	// consider a query with join condition: t1.b = t2.b and t2.b = t3.b,
+	// here t1.b = t3.b will be an implied predicate which is generated
+	// for the join t1 Join (t2 Join t3)
+	// the cost of t3.b will already be considered when the join on t2 and
+	// t3 was performed, and the cost of t1.b should only be considered once.
+	const ULONG arity = exprhdl.Arity();
+	CExpression *join_pred_expr = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, exprhdl.PexprScalarChild(arity - 1), exprhdl);
+	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(join_pred_expr->PdpDerive())->PcrsUsed();
 	const ULONG ulColsUsed = pcrsUsed->Size();
+	join_pred_expr->Release();
 
 	// cost of nested loop join contains three parts:
 	// 1. feeding outer tuples. This part is correlated with rows and width of outer tuples
