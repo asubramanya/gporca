@@ -1079,6 +1079,9 @@ namespace gpopt
 				CExpression *pexprToMatch,
 				CExpressionArray *pdrgpexpr // array of predicates to inspect
 				);
+
+			static
+			CExpression *GetJoinWithoutInferredPreds(IMemoryPool *mp, CExpression *pexprJoin);
 	}; // class CUtils
 
 	// hash set from expressions

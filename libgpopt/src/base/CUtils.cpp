@@ -5108,4 +5108,20 @@ CUtils::PexprMatchEqualityOrINDF
 	return pexprMatching;
 }
 
+CExpression *
+CUtils::GetJoinWithoutInferredPreds
+	(
+	IMemoryPool *mp,
+	CExpression *pexprJoin
+	)
+{
+	GPOS_ASSERT(3 == pexprJoin->Arity());
+	CExpression *pred_without_inferred_cond = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, (*pexprJoin)[2], pexprJoin);
+	CExpression *pexprLeft = (*pexprJoin)[0];
+	CExpression *pexprRight = (*pexprJoin)[1];
+	pexprLeft->AddRef();
+	pexprRight->AddRef();
+	return CUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, pexprLeft, pexprRight, pred_without_inferred_cond);
+}
+
 // EOF

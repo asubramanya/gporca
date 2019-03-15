@@ -542,18 +542,7 @@ CJoinOrderDP::PexprBestJoinOrderDP
 			{
 				// we found solutions of left and right subsets, we check if
 				// this gives a better solution for the input set
-				CExpression *pexprJoinTemp = PexprJoin(pbsCurrent, pbsRemaining);
-				
-				CExpression *pexprLeft = (*pexprJoinTemp)[0];
-				CExpression *pexprRight = (*pexprJoinTemp)[1];
-				CExpression *pexprRemoveInferPred = CPredicateUtils::PexprRemoveImpliedConjuncts(m_mp, (*pexprJoinTemp)[2], pexprJoinTemp);
-				
-				
-				pexprLeft->AddRef();
-				pexprRight->AddRef();
-				CExpression *pexprJoin = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(m_mp, pexprLeft, pexprRight, pexprRemoveInferPred);
-				pexprJoinTemp->Release();
-				
+				CExpression *pexprJoin = PexprJoin(pbsCurrent, pbsRemaining);
 				CDouble dCost = DCost(pexprJoin);
 
 				if (NULL == pexprResult || dCost < dMinCost)
@@ -582,6 +571,12 @@ CJoinOrderDP::PexprBestJoinOrderDP
 	{
 		m_pexprDummy->AddRef();
 		pexprResult = m_pexprDummy;
+	}
+	else
+	{
+		CExpression *pexprResultWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(m_mp, pexprResult);
+		CRefCount::SafeRelease(pexprResult);
+		pexprResult = pexprResultWithoutInferredPred;
 	}
 
 	DeriveStats(pexprResult);
