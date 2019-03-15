@@ -527,13 +527,23 @@ CJoinOrder::PcompCombine
 			other_conjuncts->Release();
 			CExpression *predicate = CPredicateUtils::PexprConjunction(m_mp, loj_conjuncts);
 			pexpr = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(m_mp, pexprChild1, pexprChild2, predicate);
+			CExpression *pexprLeft = (*pexpr)[0];
+			CExpression *pexprRight = (*pexpr)[1];
+			CExpression *pexprRemoveInferPred = CPredicateUtils::PexprRemoveImpliedConjuncts(m_mp, (*pexpr)[2], pexpr);
+			pexprLeft->AddRef();
+			pexprRight->AddRef();
+			COperator *popJoin = pexpr->Pop();
+			popJoin->AddRef();
+			CExpression *pexprJoin = GPOS_NEW(m_mp) CExpression(m_mp, popJoin, pexprLeft, pexprRight, pexprRemoveInferPred);
+			pexpr->Release();
+			pexpr = pexprJoin;
 		}
 	}
 	// if the component has parent_loj_id > 0, it must be the left child or has the left child
 	// of loj id indicated by parent_loj_id
 	GPOS_ASSERT_IMP(NON_LOJ_DEFAULT_ID < parent_loj_id, EpLeft == position);
-	SComponent *join_comp = GPOS_NEW(m_mp) SComponent(pexpr, pbs, edge_set, parent_loj_id, position);
 
+	SComponent *join_comp = GPOS_NEW(m_mp) SComponent(pexpr, pbs, edge_set, parent_loj_id, position);
 	return join_comp;
 }
 

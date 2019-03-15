@@ -531,6 +531,7 @@ CJoinOrderDP::PexprBestJoinOrderDP
 
 		// check if subsets are connected with one or more edges
 		CExpression *pexprPred = PexprPred(pbsCurrent, pbsRemaining);
+		
 		if (NULL != pexprPred)
 		{
 			// compute solutions of left and right subsets recursively
@@ -541,7 +542,18 @@ CJoinOrderDP::PexprBestJoinOrderDP
 			{
 				// we found solutions of left and right subsets, we check if
 				// this gives a better solution for the input set
-				CExpression *pexprJoin = PexprJoin(pbsCurrent, pbsRemaining);
+				CExpression *pexprJoinTemp = PexprJoin(pbsCurrent, pbsRemaining);
+				
+				CExpression *pexprLeft = (*pexprJoinTemp)[0];
+				CExpression *pexprRight = (*pexprJoinTemp)[1];
+				CExpression *pexprRemoveInferPred = CPredicateUtils::PexprRemoveImpliedConjuncts(m_mp, (*pexprJoinTemp)[2], pexprJoinTemp);
+				
+				
+				pexprLeft->AddRef();
+				pexprRight->AddRef();
+				CExpression *pexprJoin = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(m_mp, pexprLeft, pexprRight, pexprRemoveInferPred);
+				pexprJoinTemp->Release();
+				
 				CDouble dCost = DCost(pexprJoin);
 
 				if (NULL == pexprResult || dCost < dMinCost)

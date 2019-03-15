@@ -654,12 +654,8 @@ CPhysicalJoin::FHashJoinPossible
 	GPOS_ASSERT(!CUtils::HasOuterRefs(pexpr));
 	GPOS_ASSERT(NULL != ppexprResult);
 
-	CExpression *pexprPred = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, (*pexpr)[2], pexpr);
-
-
 	// introduce explicit casting, if needed
-	CExpressionArray *pdrgpexpr = CCastUtils::PdrgpexprCastEquality(mp,  pexprPred);
-		pexprPred->Release();
+	CExpressionArray *pdrgpexpr = CCastUtils::PdrgpexprCastEquality(mp,  (*pexpr)[2]);
 
 	// identify hashkeys
 	ULONG ulPreds = pdrgpexpr->Size();
