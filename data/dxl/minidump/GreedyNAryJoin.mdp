@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<dxl:Comment><![CDATA[
 Objective:
 Make sure that the plan picked up is the one produced via the Greedy Xform and
 not MinCard Xform when DP and NAryJoin Xforms are disabled.
@@ -15,21 +15,21 @@ INSERT INTO t3 VALUES(98),(97),(96),(107),(108),(109),(110),(120),(130),(140);
 SELECT disable_xform('CXformExpandNAryJoin');
 SET optimizer_join_order_threshold=2;
 
-EXPLAIN SELECT * FROM t1 INNER JOIN t2 ON a =b INNER JOIN t3 ON b = c;
-
-                                   QUERY PLAN
+                                      QUERY PLAN
+--------------------------------------------------------------------------------------
  Gather Motion 3:1  (slice1; segments: 3)  (cost=0.00..1293.75 rows=1 width=12)
    ->  Hash Join  (cost=0.00..1293.75 rows=1 width=12)
-         Hash Cond: t2.b = t3.c AND t1.a = t3.c
-         ->  Hash Join  (cost=0.00..862.75 rows=1 width=8)
-               Hash Cond: t1.a = t2.b
-               ->  Table Scan on t1  (cost=0.00..431.06 rows=3334 width=4)
-               ->  Hash  (cost=431.01..431.01 rows=334 width=4)
-                     ->  Table Scan on t2  (cost=0.00..431.01 rows=334 width=4)
-         ->  Hash  (cost=431.00..431.00 rows=4 width=4)
-               ->  Table Scan on t3  (cost=0.00..431.00 rows=4 width=4)
--->
-
+         Hash Cond: t3.c = t2.b
+         ->  Table Scan on t3  (cost=0.00..431.00 rows=4 width=4)
+         ->  Hash  (cost=862.75..862.75 rows=1 width=8)
+               ->  Hash Join  (cost=0.00..862.75 rows=1 width=8)
+                     Hash Cond: t1.a = t2.b
+                     ->  Table Scan on t1  (cost=0.00..431.06 rows=3334 width=4)
+                     ->  Hash  (cost=431.01..431.01 rows=334 width=4)
+                           ->  Table Scan on t2  (cost=0.00..431.01 rows=334 width=4)
+ Settings:  optimizer=on; optimizer_join_order_threshold=2
+]]>
+</dxl:Comment>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
