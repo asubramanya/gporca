@@ -38,8 +38,7 @@ CPredicateUtilsTest::EresUnittest()
 		{
 		GPOS_UNITTEST_FUNC(CPredicateUtilsTest::EresUnittest_Conjunctions),
 		GPOS_UNITTEST_FUNC(CPredicateUtilsTest::EresUnittest_Disjunctions),
-		GPOS_UNITTEST_FUNC(CPredicateUtilsTest::EresUnittest_PlainEqualities),
-		GPOS_UNITTEST_FUNC(CPredicateUtilsTest::EresUnittest_Implication),
+		GPOS_UNITTEST_FUNC(CPredicateUtilsTest::EresUnittest_PlainEqualities)
 		};
 
 	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
@@ -317,91 +316,4 @@ CPredicateUtilsTest::EresUnittest_PlainEqualities()
 	return GPOS_OK;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPredicateUtilsTest::EresUnittest_Implication
-//
-//	@doc:
-//		Test removal of implied predicates
-//
-//---------------------------------------------------------------------------
-GPOS_RESULT
-CPredicateUtilsTest::EresUnittest_Implication()
-{
-	CAutoMemoryPool amp;
-	IMemoryPool *mp = amp.Pmp();
-
-	// setup a file-based provider
-	CMDProviderMemory *pmdp = CTestUtils::m_pmdpf;
-	pmdp->AddRef();
-	CMDAccessor mda(mp, CMDCache::Pcache(), CTestUtils::m_sysidDefault, pmdp);
-
-	// install opt context in TLS
-	CAutoOptCtxt aoc
-					(
-					mp,
-					&mda,
-					NULL,  /* pceeval */
-					CTestUtils::GetCostModel(mp)
-					);
-
-	// generate a two cascaded joins
-	CWStringConst strName1(GPOS_WSZ_LIT("Rel1"));
-	CMDIdGPDB *pmdid1 = GPOS_NEW(mp) CMDIdGPDB(GPOPT_TEST_REL_OID1, 1, 1);
-	CTableDescriptor *ptabdesc1 = CTestUtils::PtabdescCreate(mp, 3, pmdid1, CName(&strName1));
-	CWStringConst strAlias1(GPOS_WSZ_LIT("Rel1"));
-	CExpression *pexprRel1 = CTestUtils::PexprLogicalGet(mp, ptabdesc1, &strAlias1);
-
-	CWStringConst strName2(GPOS_WSZ_LIT("Rel2"));
-	CMDIdGPDB *pmdid2 = GPOS_NEW(mp) CMDIdGPDB(GPOPT_TEST_REL_OID2, 1, 1);
-	CTableDescriptor *ptabdesc2 = CTestUtils::PtabdescCreate(mp, 3, pmdid2, CName(&strName2));
-	CWStringConst strAlias2(GPOS_WSZ_LIT("Rel2"));
-	CExpression *pexprRel2 = CTestUtils::PexprLogicalGet(mp, ptabdesc2, &strAlias2);
-
-	CWStringConst strName3(GPOS_WSZ_LIT("Rel3"));
-	CMDIdGPDB *pmdid3 = GPOS_NEW(mp) CMDIdGPDB(GPOPT_TEST_REL_OID3, 1, 1);
-	CTableDescriptor *ptabdesc3 = CTestUtils::PtabdescCreate(mp, 3, pmdid3, CName(&strName3));
-	CWStringConst strAlias3(GPOS_WSZ_LIT("Rel3"));
-	CExpression *pexprRel3 = CTestUtils::PexprLogicalGet(mp, ptabdesc3, &strAlias3);
-
-	CExpression *pexprJoin1 = CTestUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, pexprRel1, pexprRel2);
-	CExpression *pexprJoin2 = CTestUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, pexprJoin1, pexprRel3);
-
-	{
-		CAutoTrace at(mp);
-		at.Os() << "Original expression:" << std::endl << *pexprJoin2 <<std::endl;
-	}
-
-	// imply new predicates by deriving constraints
-	CExpression *pexprConstraints = CExpressionPreprocessor::PexprAddPredicatesFromConstraints(mp, pexprJoin2);
-
-	{
-		CAutoTrace at(mp);
-		at.Os() << "Expression with implied predicates:" << std::endl << *pexprConstraints <<std::endl;;
-	}
-
-	// minimize join predicates by removing implied conjuncts
-	CExpressionHandle exprhdl(mp);
-	exprhdl.Attach(pexprConstraints);
-	CExpression *pexprMinimizedPred = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, (*pexprConstraints)[2], exprhdl);
-
-	{
-		CAutoTrace at(mp);
-		at.Os() << "Minimized join predicate:" << std::endl << *pexprMinimizedPred <<std::endl;
-	}
-
-	CExpressionArray *pdrgpexprOriginalConjuncts = CPredicateUtils::PdrgpexprConjuncts(mp,  (*pexprConstraints)[2]);
-	CExpressionArray *pdrgpexprNewConjuncts = CPredicateUtils::PdrgpexprConjuncts(mp, pexprMinimizedPred);
-
-	GPOS_ASSERT(pdrgpexprNewConjuncts->Size() < pdrgpexprOriginalConjuncts->Size());
-
-	// clean up
-	pdrgpexprOriginalConjuncts->Release();
-	pdrgpexprNewConjuncts->Release();
-	pexprJoin2->Release();
-	pexprConstraints->Release();
-	pexprMinimizedPred->Release();
-
-	return GPOS_OK;
-}
 // EOF

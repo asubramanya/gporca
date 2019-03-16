@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+<dxl:Comment><![CDATA[
+
 create table foo (a int, b int) distributed by (a);
 explain select 1 from (select * from foo where a = 1 and b = a limit 1) x, foo where x.a = foo.b and x.a < 2;
 
 Expectation:
 We should have the filter b=1, a=1 under the limit. These constraints should be outside the limit as well.
 a < 2 should also be outside the limit but not below.
--->
-<dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
+explain select 1 from (select * from foo where a = 1 and b = a limit 1) x, foo where x.a = foo.b and x.a < 2;
+                                                    QUERY PLAN
+------------------------------------------------------------------------------------------------------------------
+ Result  (cost=0.00..862.00 rows=1 width=4)
+   ->  Gather Motion 3:1  (slice4; segments: 3)  (cost=0.00..862.00 rows=1 width=1)
+         ->  Hash Join  (cost=0.00..862.00 rows=1 width=1)
+               Hash Cond: public.foo.a = public.foo.b
+               ->  Redistribute Motion 1:3  (slice2)  (cost=0.00..431.00 rows=1 width=4)
+                     ->  Result  (cost=0.00..431.00 rows=1 width=4)
+                           Filter: public.foo.a < 2 AND public.foo.a = public.foo.b
+                           ->  Limit  (cost=0.00..431.00 rows=1 width=8)
+                                 ->  Gather Motion 3:1  (slice1; segments: 3)  (cost=0.00..431.00 rows=1 width=8)
+                                       ->  Table Scan on foo  (cost=0.00..431.00 rows=1 width=8)
+                                             Filter: a = 1 AND b = 1 AND b = a
+               ->  Hash  (cost=431.00..431.00 rows=1 width=4)
+                     ->  Broadcast Motion 3:3  (slice3; segments: 3)  (cost=0.00..431.00 rows=1 width=4)
+                           ->  Table Scan on foo  (cost=0.00..431.00 rows=1 width=4)
+                                 Filter: b = 1
+]]>
+</dxl:Comment>
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
@@ -273,7 +293,7 @@ a < 2 should also be outside the limit but not below.
         </dxl:LogicalJoin>
       </dxl:LogicalProject>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="108">
+    <dxl:Plan Id="0" SpaceSize="38">
       <dxl:Result>
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="862.000626" Rows="1.000000" Width="4"/>

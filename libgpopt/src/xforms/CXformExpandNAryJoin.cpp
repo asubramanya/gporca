@@ -149,10 +149,10 @@ CXformExpandNAryJoin::Transform
 
 	// normalize the tree and push down the predicates
 	CExpression *pexprNormalized = CNormalizer::PexprNormalize(mp, pexprSelect);
-	CExpression *pexprWithoutPred = RemoveInferredPreds(mp, pexprNormalized);
-	pexprNormalized->Release();
+//	CExpression *pexprWithoutPred = RemoveInferredPreds(mp, pexprNormalized);
+//	pexprNormalized->Release();
 	pexprSelect->Release();
-	pxfres->Add(pexprWithoutPred);
+	pxfres->Add(pexprNormalized);
 }
 
 CExpression *

@@ -543,23 +543,23 @@ CJoinOrderDP::PexprBestJoinOrderDP
 				// we found solutions of left and right subsets, we check if
 				// this gives a better solution for the input set
 				CExpression *pexprJoin = PexprJoin(pbsCurrent, pbsRemaining);
-				CExpression *pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(m_mp, pexprJoin);
-				CDouble dCost = DCost(pexprJoinWithoutInferredPred);
+//				CExpression *pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(m_mp, pexprJoin);
+				CDouble dCost = DCost(pexprJoin);
 
 				if (NULL == pexprResult || dCost < dMinCost)
 				{
 					// this is the first solution, or we found a better solution
 					dMinCost = dCost;
 					CRefCount::SafeRelease(pexprResult);
-					pexprJoinWithoutInferredPred->AddRef();
-					pexprResult = pexprJoinWithoutInferredPred;
+					pexprJoin->AddRef();
+					pexprResult = pexprJoin;
 				}
 
 				if (m_ulComps == pbs->Size())
 				{
-					AddJoinOrder(pexprJoinWithoutInferredPred, dCost);
+					AddJoinOrder(pexprJoin, dCost);
 				}
-				pexprJoinWithoutInferredPred->Release();
+//				pexprJoinWithoutInferredPred->Release();
 				pexprJoin->Release();
 			}
 		}

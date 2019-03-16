@@ -871,7 +871,17 @@ CNormalizer::PushThruJoin
 
 	// create a new join expression
 	pop->AddRef();
-	*ppexprResult = GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
+	CExpression *pexprJoinWithInferredPred = GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
+	CExpression *pexprJoinWithoutInferredPred = NULL;
+	if (pop->Eopid() != COperator::EopLogicalNAryJoin)
+	{
+		pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(mp, pexprJoinWithInferredPred);
+		pexprJoinWithInferredPred->Release();
+		*ppexprResult = pexprJoinWithoutInferredPred;
+		return;
+	}
+
+	*ppexprResult = pexprJoinWithInferredPred;
 }
 
 //---------------------------------------------------------------------------

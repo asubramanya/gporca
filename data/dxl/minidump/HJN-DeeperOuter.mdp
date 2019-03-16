@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
-  <dxl:Thread Id="0">
-    <!--
-REPRO:  empty tables
-
+<dxl:Comment><![CDATA[
 CREATE TABLE x(i smallint, j smallint);
 CREATE TABLE y(i smallint, j smallint);
 CREATE TABLE z(i int, j int, k int);
 
-SELECT z.*,x.* FROM x,y,z WHERE x.i=y.i AND x.i=z.i;
--->
+bhuvneshchaudhary=# EXPLAIN SELECT z.*,x.* FROM x,y,z WHERE x.i=y.i AND x.i=z.i;
+                                              QUERY PLAN
+------------------------------------------------------------------------------------------------------
+ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..1293.00 rows=1 width=16)
+   ->  Hash Join  (cost=0.00..1293.00 rows=1 width=16)
+         Hash Cond: z.i = x.i::integer
+         ->  Table Scan on z  (cost=0.00..431.00 rows=1 width=12)
+         ->  Hash  (cost=862.00..862.00 rows=1 width=4)
+               ->  Redistribute Motion 3:3  (slice1; segments: 3)  (cost=0.00..862.00 rows=1 width=4)
+                     Hash Key: x.i::integer
+                     ->  Hash Join  (cost=0.00..862.00 rows=1 width=4)
+                           Hash Cond: x.i = y.i
+                           ->  Table Scan on x  (cost=0.00..431.00 rows=1 width=4)
+                           ->  Hash  (cost=431.00..431.00 rows=1 width=2)
+                                 ->  Table Scan on y  (cost=0.00..431.00 rows=1 width=2)
+ Optimizer status: PQO version 3.29.0
+]]>
+</dxl:Comment>
+  <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
       <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
@@ -358,7 +372,7 @@ SELECT z.*,x.* FROM x,y,z WHERE x.i=y.i AND x.i=z.i;
         </dxl:And>
       </dxl:LogicalJoin>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="1184">
+    <dxl:Plan Id="0" SpaceSize="2217">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="4.335938" Rows="1.000000" Width="32"/>
@@ -406,6 +420,12 @@ SELECT z.*,x.* FROM x,y,z WHERE x.i=y.i AND x.i=z.i;
           <dxl:Filter/>
           <dxl:JoinFilter/>
           <dxl:HashCondList>
+            <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
+              <dxl:Ident ColId="18" ColName="i" TypeMdid="0.23.1.0"/>
+              <dxl:Cast TypeMdid="0.23.1.0" FuncId="0.313.1.0">
+                <dxl:Ident ColId="0" ColName="i" TypeMdid="0.21.1.0"/>
+              </dxl:Cast>
+            </dxl:Comparison>
             <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
               <dxl:Ident ColId="18" ColName="i" TypeMdid="0.23.1.0"/>
               <dxl:Cast TypeMdid="0.23.1.0" FuncId="0.313.1.0">

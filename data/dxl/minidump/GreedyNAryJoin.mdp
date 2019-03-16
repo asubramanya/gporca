@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
 <dxl:Comment><![CDATA[
 Objective:
 Make sure that the plan picked up is the one produced via the Greedy Xform and
@@ -30,7 +31,6 @@ SET optimizer_join_order_threshold=2;
  Settings:  optimizer=on; optimizer_join_order_threshold=2
 ]]>
 </dxl:Comment>
-<dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>

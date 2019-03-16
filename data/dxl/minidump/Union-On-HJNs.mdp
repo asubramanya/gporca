@@ -486,7 +486,7 @@
         </dxl:LogicalProject>
       </dxl:UnionAll>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="1065350444544000">
+    <dxl:Plan Id="0" SpaceSize="9883185839861760">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="54.180489" Rows="2.000000" Width="32"/>
@@ -808,6 +808,18 @@
                   <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
                     <dxl:Ident ColId="193" ColName="d" TypeMdid="0.23.1.0"/>
                     <dxl:Ident ColId="171" ColName="a" TypeMdid="0.23.1.0"/>
+                  </dxl:Comparison>
+                  <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
+                    <dxl:Ident ColId="204" ColName="e" TypeMdid="0.23.1.0"/>
+                    <dxl:Ident ColId="171" ColName="a" TypeMdid="0.23.1.0"/>
+                  </dxl:Comparison>
+                  <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
+                    <dxl:Ident ColId="193" ColName="d" TypeMdid="0.23.1.0"/>
+                    <dxl:Ident ColId="182" ColName="c" TypeMdid="0.23.1.0"/>
+                  </dxl:Comparison>
+                  <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
+                    <dxl:Ident ColId="204" ColName="e" TypeMdid="0.23.1.0"/>
+                    <dxl:Ident ColId="182" ColName="c" TypeMdid="0.23.1.0"/>
                   </dxl:Comparison>
                 </dxl:HashCondList>
                 <dxl:HashJoin JoinType="Inner">
@@ -2332,6 +2344,18 @@
                     <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
                       <dxl:Ident ColId="109" ColName="d" TypeMdid="0.23.1.0"/>
                       <dxl:Ident ColId="87" ColName="a" TypeMdid="0.23.1.0"/>
+                    </dxl:Comparison>
+                    <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
+                      <dxl:Ident ColId="120" ColName="e" TypeMdid="0.23.1.0"/>
+                      <dxl:Ident ColId="87" ColName="a" TypeMdid="0.23.1.0"/>
+                    </dxl:Comparison>
+                    <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
+                      <dxl:Ident ColId="109" ColName="d" TypeMdid="0.23.1.0"/>
+                      <dxl:Ident ColId="98" ColName="c" TypeMdid="0.23.1.0"/>
+                    </dxl:Comparison>
+                    <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
+                      <dxl:Ident ColId="120" ColName="e" TypeMdid="0.23.1.0"/>
+                      <dxl:Ident ColId="98" ColName="c" TypeMdid="0.23.1.0"/>
                     </dxl:Comparison>
                   </dxl:HashCondList>
                   <dxl:HashJoin JoinType="Inner">
