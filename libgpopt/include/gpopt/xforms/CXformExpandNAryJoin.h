@@ -73,6 +73,11 @@ namespace gpopt
 		
 			CExpression *RemoveInferredPreds(
 								IMemoryPool *mp, CExpression *pexpr) const;
+		
+		BOOL IsApplyOnce()
+		{
+			return true;
+		}
 
 	}; // class CXformExpandNAryJoin
 
