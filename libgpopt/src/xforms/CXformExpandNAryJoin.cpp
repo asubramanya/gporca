@@ -44,7 +44,7 @@ CXformExpandNAryJoin::CXformExpandNAryJoin
 					(
 					mp,
 					GPOS_NEW(mp) CLogicalNAryJoin(mp),
-					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternMultiTree(mp)),
+					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternMultiLeaf(mp)),
 					GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))
 					)
 		)
@@ -149,43 +149,8 @@ CXformExpandNAryJoin::Transform
 
 	// normalize the tree and push down the predicates
 	CExpression *pexprNormalized = CNormalizer::PexprNormalize(mp, pexprSelect);
-//	CExpression *pexprWithoutPred = RemoveInferredPreds(mp, pexprNormalized);
-//	pexprNormalized->Release();
 	pexprSelect->Release();
 	pxfres->Add(pexprNormalized);
-}
-
-CExpression *
-CXformExpandNAryJoin::RemoveInferredPreds(IMemoryPool *mp
-										  , CExpression *pexpr) const
-{
-	COperator *pop = pexpr->Pop();
-	
-	// recursively process children
-	const ULONG arity = pexpr->Arity();
-	pop->AddRef();
-	
-	CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		CExpression *pexprChild = RemoveInferredPreds(mp, (*pexpr)[ul]);
-		pdrgpexprChildren->Append(pexprChild);
-	}
-	
-	CExpression *pexprNew = GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
-	// if the expression a inner join, remove the inferred predicates
-	if (pop->Eopid() == COperator::EopLogicalInnerJoin)
-	{
-		CExpression *pexprJoinWithoutInferredPreds = CUtils::GetJoinWithoutInferredPreds(mp, pexprNew);
-		
-		if (NULL != pexprJoinWithoutInferredPreds)
-		{
-			pexprNew->Release();
-			pexprNew = pexprJoinWithoutInferredPreds;;
-		}
-	}
-	
-	return pexprNew;
 }
 
 // EOF

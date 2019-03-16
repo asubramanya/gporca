@@ -491,9 +491,6 @@ CJoinOrder::PcompCombine
 			// since they change the semantics of the outer join.
 			CExpression *loj_predicate = CPredicateUtils::PexprConjunction(m_mp, loj_conjuncts);
 			pexpr = CUtils::PexprLogicalJoin<CLogicalLeftOuterJoin>(m_mp, pexprLeft, pexprRight, loj_predicate);
-//			CExpression *pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(m_mp, pexpr);
-//			CRefCount::SafeRelease(pexpr);
-//			pexpr = pexprJoinWithoutInferredPred;
 
 			// remaining predicates are place on top as a filter
 			CExpression *filter_predicate = CPredicateUtils::PexprConjunction(m_mp, other_conjuncts);
@@ -530,16 +527,13 @@ CJoinOrder::PcompCombine
 			other_conjuncts->Release();
 			CExpression *predicate = CPredicateUtils::PexprConjunction(m_mp, loj_conjuncts);
 			pexpr = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(m_mp, pexprChild1, pexprChild2, predicate);
-//			CExpression *pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(m_mp, pexpr);
-//			CRefCount::SafeRelease(pexpr);
-//			pexpr = pexprJoinWithoutInferredPred;
 		}
 	}
 	// if the component has parent_loj_id > 0, it must be the left child or has the left child
 	// of loj id indicated by parent_loj_id
 	GPOS_ASSERT_IMP(NON_LOJ_DEFAULT_ID < parent_loj_id, EpLeft == position);
-
 	SComponent *join_comp = GPOS_NEW(m_mp) SComponent(pexpr, pbs, edge_set, parent_loj_id, position);
+
 	return join_comp;
 }
 

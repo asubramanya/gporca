@@ -493,9 +493,6 @@ namespace gpopt
 			// remove conjuncts that are implied based on child columns equivalence classes
 			static
 			CExpression *PexprRemoveImpliedConjuncts(IMemoryPool *mp, CExpression *pexprScalar, CExpressionHandle &exprhdl);
-		
-			static
-			CExpression *PexprRemoveImpliedConjuncts(IMemoryPool *mp, CExpression *pexprScalar, CExpression *pexpr);
 
 			//	check if given correlations are valid for semi join operator;
 			static

@@ -52,7 +52,6 @@
 #include "naucrates/md/CMDArrayCoerceCastGPDB.h"
 #include "naucrates/md/CMDIdScCmp.h"
 #include "naucrates/traceflags/traceflags.h"
-#include "naucrates/statistics/CStatsPredUtils.h"
 
 using namespace gpopt;
 using namespace gpmd;
@@ -2781,38 +2780,6 @@ CUtils::PdrgpcrsCopyChildEquivClasses
 	return pdrgpcrs;
 }
 
-CColRefSetArray *
-CUtils::PdrgpcrsCopyChildEquivClasses
-(
- IMemoryPool *mp,
- CExpression *pexpr
- )
-{
-	CColRefSetArray *pdrgpcrs = GPOS_NEW(mp) CColRefSetArray(mp);
-	const ULONG arity = pexpr->Arity();
-	for (ULONG ul = 0; ul < arity - 1; ul++)
-	{
-			CExpression *pexprChild = (*pexpr)[ul];
-			CDrvdPropRelational *pdprel = CDrvdPropRelational::GetRelationalProperties(pexprChild->PdpDerive());
-			CColRefSetArray *pdrgpcrsChild = pdprel->Ppc()->PdrgpcrsEquivClasses();
-			
-			CColRefSetArray *pdrgpcrsChildCopy = GPOS_NEW(mp) CColRefSetArray(mp);
-			const ULONG size = pdrgpcrsChild->Size();
-			for (ULONG ulInner = 0; ulInner < size; ulInner++)
-			{
-				CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *(*pdrgpcrsChild)[ulInner]);
-				pdrgpcrsChildCopy->Append(pcrs);
-			}
-			
-			CColRefSetArray *pdrgpcrsMerged = PdrgpcrsMergeEquivClasses(mp, pdrgpcrs, pdrgpcrsChildCopy);
-			pdrgpcrsChildCopy->Release();
-			pdrgpcrs->Release();
-			pdrgpcrs = pdrgpcrsMerged;
-	}
-	
-	return pdrgpcrs;
-}
-
 // return a copy of the given array of columns, excluding the columns in the given colrefset
 CColRefArray *
 CUtils::PdrgpcrExcludeColumns
@@ -5116,7 +5083,9 @@ CUtils::GetJoinWithoutInferredPreds
 	)
 {
 	GPOS_ASSERT(3 == pexprJoin->Arity());
-	CExpression *pred_without_inferred_cond = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, (*pexprJoin)[2], pexprJoin);
+	CExpressionHandle exprhdl(mp);
+	exprhdl.Attach(pexprJoin);
+	CExpression *pred_without_inferred_cond = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, exprhdl.PexprScalarChild(pexprJoin->Arity() - 1), exprhdl);
 	CExpression *pexprLeft = (*pexprJoin)[0];
 	CExpression *pexprRight = (*pexprJoin)[1];
 	pexprLeft->AddRef();
