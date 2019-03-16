@@ -5121,7 +5121,9 @@ CUtils::GetJoinWithoutInferredPreds
 	CExpression *pexprRight = (*pexprJoin)[1];
 	pexprLeft->AddRef();
 	pexprRight->AddRef();
-	return CUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, pexprLeft, pexprRight, pred_without_inferred_cond);
+	COperator *popJoin = pexprJoin->Pop();
+	popJoin->AddRef();
+	return GPOS_NEW(mp) CExpression(mp, popJoin, pexprLeft, pexprRight, pred_without_inferred_cond);
 }
 
 // EOF

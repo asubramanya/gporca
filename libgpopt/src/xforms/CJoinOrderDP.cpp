@@ -543,22 +543,23 @@ CJoinOrderDP::PexprBestJoinOrderDP
 				// we found solutions of left and right subsets, we check if
 				// this gives a better solution for the input set
 				CExpression *pexprJoin = PexprJoin(pbsCurrent, pbsRemaining);
-				CDouble dCost = DCost(pexprJoin);
+				CExpression *pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(m_mp, pexprJoin);
+				CDouble dCost = DCost(pexprJoinWithoutInferredPred);
 
 				if (NULL == pexprResult || dCost < dMinCost)
 				{
 					// this is the first solution, or we found a better solution
 					dMinCost = dCost;
 					CRefCount::SafeRelease(pexprResult);
-					pexprJoin->AddRef();
-					pexprResult = pexprJoin;
+					pexprJoinWithoutInferredPred->AddRef();
+					pexprResult = pexprJoinWithoutInferredPred;
 				}
 
 				if (m_ulComps == pbs->Size())
 				{
-					AddJoinOrder(pexprJoin, dCost);
+					AddJoinOrder(pexprJoinWithoutInferredPred, dCost);
 				}
-
+				pexprJoinWithoutInferredPred->Release();
 				pexprJoin->Release();
 			}
 		}
@@ -571,12 +572,6 @@ CJoinOrderDP::PexprBestJoinOrderDP
 	{
 		m_pexprDummy->AddRef();
 		pexprResult = m_pexprDummy;
-	}
-	else
-	{
-		CExpression *pexprResultWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(m_mp, pexprResult);
-		CRefCount::SafeRelease(pexprResult);
-		pexprResult = pexprResultWithoutInferredPred;
 	}
 
 	DeriveStats(pexprResult);

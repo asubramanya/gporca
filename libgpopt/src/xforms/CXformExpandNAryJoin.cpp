@@ -150,18 +150,7 @@ CXformExpandNAryJoin::Transform
 	// normalize the tree and push down the predicates
 	CExpression *pexprNormalized = CNormalizer::PexprNormalize(mp, pexprSelect);
 	pexprSelect->Release();
-	
-	CExpression *pexprLeft = (*pexprNormalized)[0];
-	CExpression *pexprRight = (*pexprNormalized)[1];
-	CExpression *pexprRemoveInferPred = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, (*pexprNormalized)[2], pexprNormalized);
-	pexprLeft->AddRef();
-	pexprRight->AddRef();
-	COperator *popJoin = pexprNormalized->Pop();
-	popJoin->AddRef();
-	CExpression *pexprJoinFinal = GPOS_NEW(mp) CExpression(mp, popJoin, pexprLeft, pexprRight, pexprRemoveInferPred);
-	pexprNormalized->Release();
-	
-	pxfres->Add(pexprJoinFinal);
+	pxfres->Add(pexprNormalized);
 }
 
 // EOF
