@@ -5095,4 +5095,20 @@ CUtils::GetJoinWithoutInferredPreds
 	return GPOS_NEW(mp) CExpression(mp, popJoin, pexprLeft, pexprRight, pred_without_inferred_cond);
 }
 
+BOOL
+CUtils::CanRemoveInferredPredicates
+	(
+	COperator::EOperatorId op_id
+	)
+{
+	return op_id == COperator::EopLogicalInnerJoin ||
+			op_id == COperator::EopLogicalInnerCorrelatedApply ||
+			op_id == COperator::EopLogicalLeftOuterJoin ||
+			op_id == COperator::EopLogicalLeftOuterCorrelatedApply ||
+			op_id == COperator::EopLogicalLeftSemiCorrelatedApplyIn ||
+			op_id == COperator::EopLogicalLeftAntiSemiCorrelatedApplyNotIn ||
+			op_id == COperator::EopLogicalLeftSemiJoin ||
+			op_id == COperator::EopLogicalLeftAntiSemiJoinNotIn;
+}
+
 // EOF

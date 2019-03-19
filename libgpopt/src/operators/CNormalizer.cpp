@@ -48,6 +48,7 @@ const CNormalizer::SPushThru CNormalizer::m_rgpt[] =
 	{COperator::EopLogicalLeftAntiSemiApplyNotIn, PushThruJoin},
 	{COperator::EopLogicalLeftAntiSemiCorrelatedApplyNotIn, PushThruJoin},
 	{COperator::EopLogicalLeftSemiJoin, PushThruJoin},
+	{COperator::EopLogicalLeftAntiSemiJoinNotIn, PushThruJoin}
 };
 
 
@@ -873,7 +874,8 @@ CNormalizer::PushThruJoin
 	pop->AddRef();
 	CExpression *pexprJoinWithInferredPred = GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
 	CExpression *pexprJoinWithoutInferredPred = NULL;
-	if (pop->Eopid() != COperator::EopLogicalNAryJoin)
+
+	if (CUtils::CanRemoveInferredPredicates(pop->Eopid()))
 	{
 		pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(mp, pexprJoinWithInferredPred);
 		pexprJoinWithInferredPred->Release();

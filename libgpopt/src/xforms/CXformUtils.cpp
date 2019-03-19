@@ -90,13 +90,15 @@ CXformUtils::ExfpSemiJoin2CrossProduct
 
 	CColRefSet *pcrsUsed = exprhdl.GetDrvdScalarProps(2 /*child_index*/)->PcrsUsed();
 	CColRefSet *pcrsOuterOutput = exprhdl.GetRelationalProperties(0 /*child_index*/)->PcrsOutput();
-	if (0 == pcrsUsed->Size() || !pcrsOuterOutput->ContainsAll(pcrsUsed))
+	if (CUtils::FScalarConstTrue(exprhdl.PexprScalarChild(2 /*child_index*/)) || (pcrsUsed->Size() != 0 && pcrsOuterOutput->ContainsAll(pcrsUsed)))
 	{
-		// xform is inapplicable of join predicate uses columns from join's inner child
-		return CXform::ExfpNone;
+		// xform is applicable if the scalar is a const or all the columns in the
+		// scalar are coming from the outer child.
+		return CXform::ExfpHigh;
 	}
 
-	return CXform::ExfpHigh;
+
+	return CXform::ExfpNone;
 }
 
 
