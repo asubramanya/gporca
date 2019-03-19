@@ -47,7 +47,8 @@ const CNormalizer::SPushThru CNormalizer::m_rgpt[] =
 	{COperator::EopLogicalLeftAntiSemiApply, PushThruJoin},
 	{COperator::EopLogicalLeftAntiSemiApplyNotIn, PushThruJoin},
 	{COperator::EopLogicalLeftAntiSemiCorrelatedApplyNotIn, PushThruJoin},
-	{COperator::EopLogicalLeftSemiJoin, PushThruJoin}
+	{COperator::EopLogicalLeftSemiJoin, PushThruJoin},
+	{COperator::EopLogicalLeftAntiSemiJoinNotIn, PushThruJoin}
 };
 
 
@@ -809,6 +810,7 @@ CNormalizer::PushThruJoin
 	COperator *pop = pexprJoin->Pop();
 	const ULONG arity = pexprJoin->Arity();
 	BOOL fLASApply = CUtils::FLeftAntiSemiApply(pop);
+	BOOL fLASNotIn = COperator::EopLogicalLeftAntiSemiJoinNotIn == pop->Eopid();
 	COperator::EOperatorId op_id = pop->Eopid();
 	BOOL fOuterJoin =
 		COperator::EopLogicalLeftOuterJoin == op_id ||
@@ -839,7 +841,7 @@ CNormalizer::PushThruJoin
 	{
 		CExpression *pexprChild = (*pexprJoin)[ul];
 		CExpression *pexprNewChild = NULL;
-		if (fLASApply)
+		if (fLASApply || fLASNotIn)
 		{
 			// do not push anti-semi-apply predicates to any of the children
 			pexprNewChild = PexprNormalize(mp, pexprChild);

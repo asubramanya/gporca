@@ -5107,7 +5107,8 @@ CUtils::CanRemoveInferredPredicates
 			op_id == COperator::EopLogicalLeftOuterCorrelatedApply ||
 			op_id == COperator::EopLogicalLeftSemiCorrelatedApplyIn ||
 			op_id == COperator::EopLogicalLeftAntiSemiCorrelatedApplyNotIn ||
-			op_id == COperator::EopLogicalLeftSemiJoin;
+			op_id == COperator::EopLogicalLeftSemiJoin ||
+			op_id == COperator::EopLogicalLeftAntiSemiJoinNotIn;
 }
 
 // EOF
