@@ -47,8 +47,7 @@ const CNormalizer::SPushThru CNormalizer::m_rgpt[] =
 	{COperator::EopLogicalLeftAntiSemiApply, PushThruJoin},
 	{COperator::EopLogicalLeftAntiSemiApplyNotIn, PushThruJoin},
 	{COperator::EopLogicalLeftAntiSemiCorrelatedApplyNotIn, PushThruJoin},
-	{COperator::EopLogicalLeftSemiJoin, PushThruJoin},
-	{COperator::EopLogicalLeftAntiSemiJoinNotIn, PushThruJoin}
+	{COperator::EopLogicalLeftSemiJoin, PushThruJoin}
 };
 
 

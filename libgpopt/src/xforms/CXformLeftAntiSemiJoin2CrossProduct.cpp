@@ -119,6 +119,7 @@ CXformLeftAntiSemiJoin2CrossProduct::Transform
 	pexprInner->AddRef();
 	pexprScalar->AddRef();
 
+	
 	CExpression *pexprNegatedScalar = CUtils::PexprNegate(mp, pexprScalar);
 
 	// create a (limit 1) on top of inner child
