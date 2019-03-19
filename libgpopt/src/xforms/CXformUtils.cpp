@@ -92,7 +92,7 @@ CXformUtils::ExfpSemiJoin2CrossProduct
 	CColRefSet *pcrsOuterOutput = exprhdl.GetRelationalProperties(0 /*child_index*/)->PcrsOutput();
 	if (CUtils::FScalarConstTrue(exprhdl.PexprScalarChild(2 /*child_index*/)) || (pcrsUsed->Size() != 0 && pcrsOuterOutput->ContainsAll(pcrsUsed)))
 	{
-		// xform is applicable if the scalar is a const or all the columns in the
+		// xform is applicable if the scalar is a const true or all the columns in the
 		// scalar are coming from the outer child.
 		return CXform::ExfpHigh;
 	}
