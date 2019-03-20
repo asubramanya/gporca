@@ -5075,4 +5075,39 @@ CUtils::PexprMatchEqualityOrINDF
 	return pexprMatching;
 }
 
+CExpression *
+CUtils::GetJoinWithoutInferredPreds
+(
+ IMemoryPool *mp,
+ CExpression *pexprJoin
+ )
+{
+	GPOS_ASSERT(3 == pexprJoin->Arity());
+	CExpressionHandle exprhdl(mp);
+	exprhdl.Attach(pexprJoin);
+	CExpression *pred_without_inferred_cond = CPredicateUtils::PexprRemoveImpliedConjuncts(mp, exprhdl.PexprScalarChild(pexprJoin->Arity() - 1), exprhdl);
+	CExpression *pexprLeft = (*pexprJoin)[0];
+	CExpression *pexprRight = (*pexprJoin)[1];
+	pexprLeft->AddRef();
+	pexprRight->AddRef();
+	COperator *popJoin = pexprJoin->Pop();
+	popJoin->AddRef();
+	return GPOS_NEW(mp) CExpression(mp, popJoin, pexprLeft, pexprRight, pred_without_inferred_cond);
+}
+
+BOOL
+CUtils::CanRemoveInferredPredicates
+(
+ COperator::EOperatorId op_id
+ )
+{
+	return op_id == COperator::EopLogicalInnerJoin ||
+	op_id == COperator::EopLogicalInnerCorrelatedApply ||
+	op_id == COperator::EopLogicalLeftOuterJoin ||
+	op_id == COperator::EopLogicalLeftOuterCorrelatedApply ||
+	op_id == COperator::EopLogicalLeftSemiCorrelatedApplyIn ||
+	op_id == COperator::EopLogicalLeftAntiSemiCorrelatedApplyNotIn ||
+	op_id == COperator::EopLogicalLeftSemiJoin ||
+	op_id == COperator::EopLogicalLeftAntiSemiJoinNotIn;
+}
 // EOF

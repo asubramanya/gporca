@@ -108,8 +108,23 @@ CPhysicalInnerHashJoin::PdsDeriveFromHashedChildren
 	CDistributionSpecHashed *pdshashedOuter = CDistributionSpecHashed::PdsConvert(pdsOuter);
  	CDistributionSpecHashed *pdshashedInner = CDistributionSpecHashed::PdsConvert(pdsInner);
 
-	if (CUtils::Contains(PdrgpexprOuterKeys(), pdshashedOuter->Pdrgpexpr()) &&
- 		CUtils::Contains(PdrgpexprInnerKeys(), pdshashedInner->Pdrgpexpr()))
+	BOOL outerMatch = false;
+	CDistributionSpecHashed *pdsTemp = pdshashedOuter;
+	while (pdsTemp && !outerMatch)
+	{
+		outerMatch = CUtils::Contains(PdrgpexprOuterKeys(), pdsTemp->Pdrgpexpr());
+		pdsTemp = pdsTemp->PdshashedEquiv();
+	}
+
+	BOOL innerMatch = false;
+	CDistributionSpecHashed *pdsTempInner = pdshashedInner;
+	while (pdsTempInner && !innerMatch)
+	{
+		innerMatch = CUtils::Contains(PdrgpexprInnerKeys(), pdsTempInner->Pdrgpexpr());
+		pdsTempInner = pdsTempInner->PdshashedEquiv();
+	}
+
+	if (outerMatch && innerMatch)
  	{
  	 	// if both sides are hashed on subsets of hash join keys, join's output can be
  		// seen as distributed on outer spec or (equivalently) on inner spec,
