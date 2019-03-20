@@ -919,7 +919,17 @@ CCostModelGPDB::CostHashJoin
 	// get the number of columns used in join condition
 	CExpression *pexprJoinCond= exprhdl.PexprScalarChild(2);
 	CColRefSet *pcrsUsed = CDrvdPropScalar::GetDrvdScalarProps(pexprJoinCond->PdpDerive())->PcrsUsed();
-	const ULONG ulColsUsed = pcrsUsed->Size();
+	CColRefSet *pcrsLeft = exprhdl.GetRelationalProperties(0)->PcrsOutput();
+	CColRefSet *pcrsRight = exprhdl.GetRelationalProperties(1)->PcrsOutput();
+	CColRefSet *pcrsLeftOrig = GPOS_NEW(mp) CColRefSet(mp);
+	pcrsLeftOrig->Union(pcrsLeft);
+	CColRefSet *pcrsRightOrig = GPOS_NEW(mp) CColRefSet(mp);
+	pcrsRightOrig->Union(pcrsRight);
+	pcrsRightOrig->Intersection(pcrsUsed);
+	pcrsLeftOrig->Intersection(pcrsUsed);
+
+	GPOS_ASSERT(pcrsLeft);
+	GPOS_ASSERT(pcrsRight);
 
 	// TODO 2014-03-14
 	// currently, we hard coded a spilling memory threshold for judging whether hash join spills or not
@@ -939,12 +949,12 @@ CCostModelGPDB::CostHashJoin
 		costLocal = CCost(pci->NumRebinds() * (
 			// cost of building hash table
 			dRowsInner * (
-				ulColsUsed * dHJHashTableColumnCostUnit
+				pcrsLeftOrig->Size() * dHJHashTableColumnCostUnit
 				+
 				dWidthInner * dHJHashTableWidthCostUnit)
 			+
 			// cost of feeding outer tuples
-			ulColsUsed * num_rows_outer * dJoinFeedingTupColumnCostUnit
+			pcrsRightOrig->Size() * num_rows_outer * dJoinFeedingTupColumnCostUnit
 				+ dWidthOuter * num_rows_outer * dJoinFeedingTupWidthCostUnit
 			+
 			// cost of matching inner tuples
@@ -962,11 +972,11 @@ CCostModelGPDB::CostHashJoin
 		// parameter values are different.
 		costLocal = CCost(pci->NumRebinds() * (
 			dHJHashTableInitCostFactor + dRowsInner * (
-				ulColsUsed * dHJHashTableColumnCostUnit
+				pcrsLeftOrig->Size() * dHJHashTableColumnCostUnit
 				+
 				dWidthInner * dHJHashTableWidthCostUnit)
 			+
-			ulColsUsed * num_rows_outer * dHJFeedingTupColumnSpillingCostUnit
+			pcrsRightOrig->Size() * num_rows_outer * dHJFeedingTupColumnSpillingCostUnit
 				+ dWidthOuter * num_rows_outer * dHJFeedingTupWidthSpillingCostUnit
 			+
 			dWidthInner * dRowsInner * dHJHashingTupWidthSpillingCostUnit
