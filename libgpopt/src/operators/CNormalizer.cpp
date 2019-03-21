@@ -878,10 +878,15 @@ CNormalizer::PushThruJoin
 
 	if (CUtils::CanRemoveInferredPredicates(pop->Eopid()))
 	{
-		pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(mp, pexprJoinWithInferredPred);
-		pexprJoinWithInferredPred->Release();
-		*ppexprResult = pexprJoinWithoutInferredPred;
-		return;
+		CExpression *pexprScalarWithInferredPred = (*pexprJoinWithInferredPred)[2];
+		BOOL has_subquery = CDrvdPropScalar::GetDrvdScalarProps(pexprScalarWithInferredPred->PdpDerive())->FHasSubquery();
+		if (!has_subquery)
+		{
+			pexprJoinWithoutInferredPred = CUtils::GetJoinWithoutInferredPreds(mp, pexprJoinWithInferredPred);
+			pexprJoinWithInferredPred->Release();
+			*ppexprResult = pexprJoinWithoutInferredPred;
+			return;
+		}
 	}
 
 	*ppexprResult = pexprJoinWithInferredPred;
