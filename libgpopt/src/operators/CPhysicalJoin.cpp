@@ -552,8 +552,8 @@ CPhysicalJoin::ExtractHashJoinExpressions
 		pexpr = (*pexprPred)[0];
 	}
 
-	*ppexprLeft = (*pexpr)[0];
-	*ppexprRight = (*pexpr)[1];
+	*ppexprLeft = CCastUtils::PexprWithoutBinaryCoercibleCasts((*pexpr)[0]);
+	*ppexprRight = CCastUtils::PexprWithoutBinaryCoercibleCasts((*pexpr)[1]);
 }
 
 //---------------------------------------------------------------------------
