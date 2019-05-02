@@ -150,8 +150,8 @@ EXPLAIN SELECT * FROM foo_1_prt_p2 WHERE c > 10 AND f > 15;
       </dxl:Index>
       <dxl:ColumnStatistics Mdid="1.25049.1.0.5" Name="f" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="15"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="15"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="15"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="15"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:CheckConstraint Mdid="0.25051.1.0" Name="foo_1_prt_p2_check" RelationMdid="0.25049.1.0">
@@ -168,8 +168,8 @@ EXPLAIN SELECT * FROM foo_1_prt_p2 WHERE c > 10 AND f > 15;
       </dxl:CheckConstraint>
       <dxl:ColumnStatistics Mdid="1.25049.1.0.2" Name="c" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="12"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="12"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="12"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="12"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.25049.1.0" Name="foo_1_prt_p2" Rows="10000.000000" EmptyRelation="false"/>
@@ -214,12 +214,12 @@ EXPLAIN SELECT * FROM foo_1_prt_p2 WHERE c > 10 AND f > 15;
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.25049.1.0.0" Name="a" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="0.500000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="10"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="10"/>
         </dxl:StatsBucket>
         <dxl:StatsBucket Frequency="0.500000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="20"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="20"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="20"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="20"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
     </dxl:Metadata>

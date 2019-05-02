@@ -280,14 +280,14 @@
       <dxl:ColumnStatistics Mdid="1.254025.1.1.8" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="2.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
       <dxl:ColumnStatistics Mdid="1.254025.1.1.1" Name="cost" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.701.1.0" IsNull="false" Value="CtejcD1Kk0A=" DoubleValue="1234.560000"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.701.1.0" IsNull="false" Value="CtejcD1Kk0A=" DoubleValue="1234.560000"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.701.1.0" Value="CtejcD1Kk0A=" DoubleValue="1234.560000"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.701.1.0" Value="CtejcD1Kk0A=" DoubleValue="1234.560000"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:ColumnStatistics Mdid="1.254025.1.1.0" Name="partnum" Width="2.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.25.1.0" IsNull="false" Value="AAAABTE=" LintValue="161096236"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.25.1.0" IsNull="false" Value="AAAABTE=" LintValue="161096236"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.25.1.0" Value="AAAABTE=" LintValue="161096236"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.25.1.0" Value="AAAABTE=" LintValue="161096236"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
     </dxl:Metadata>

@@ -210,14 +210,14 @@ select * from (select * from h order by j limit 2) x where j = 2;
       <dxl:ColumnStatistics Mdid="1.16527.1.1.8" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="3.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
       <dxl:ColumnStatistics Mdid="1.16527.1.1.1" Name="i" Width="4.000000" NullFreq="0.000000" NdvRemain="2.000000" FreqRemain="0.333333" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="0.666667" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="2"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="2"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="2"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="2"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:ColumnStatistics Mdid="1.16527.1.1.0" Name="j" Width="4.000000" NullFreq="0.000000" NdvRemain="2.000000" FreqRemain="0.333333" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="0.666667" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="2"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="2"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="2"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="2"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
     </dxl:Metadata>

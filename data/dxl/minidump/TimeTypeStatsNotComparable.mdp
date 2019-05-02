@@ -185,8 +185,8 @@
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.16952.1.0.0" Name="ts" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.1114.1.0" IsNull="false" Value="ACBkc/fmgAM=" DoubleValue="252455529600000000.000000"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.1114.1.0" IsNull="false" Value="ACBkc/fmgAM=" DoubleValue="252455529600000000.000000"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.1114.1.0" Value="ACBkc/fmgAM=" DoubleValue="252455529600000000.000000"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.1114.1.0" Value="ACBkc/fmgAM=" DoubleValue="252455529600000000.000000"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:Type Mdid="0.1114.1.0" Name="timestamp" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="8" PassByValue="true">

@@ -399,14 +399,14 @@ WHERE tt.event_ts >= tq.ets AND
       <dxl:ColumnStatistics Mdid="1.32989821.1.1.8" Name="cmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.32989821.1.1.1" Name="event_ts" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="10"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="10"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:ColumnStatistics Mdid="1.32989821.1.1.0" Name="symbol" Width="17.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.1042.1.0" IsNull="false" Value="AAAAFEEgICAgICAgICAgICAgICA=" LintValue="570426148"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.1042.1.0" IsNull="false" Value="AAAAFEEgICAgICAgICAgICAgICA=" LintValue="570426148"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.1042.1.0" Value="AAAAFEEgICAgICAgICAgICAgICA=" LintValue="570426148"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.1042.1.0" Value="AAAAFEEgICAgICAgICAgICAgICA=" LintValue="570426148"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:GPDBScalarOp Mdid="0.97.1.0" Name="&lt;" ComparisonType="LT" ReturnsNullOnNullInput="true">
@@ -457,14 +457,14 @@ WHERE tt.event_ts >= tq.ets AND
       <dxl:ColumnStatistics Mdid="1.32989821.1.1.10" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.32989821.1.1.3" Name="trade_volume" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="30"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="30"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="30"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="30"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:ColumnStatistics Mdid="1.32989821.1.1.2" Name="trade_price" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="20"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="20"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="20"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="20"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.32989821.1.1" Name="my_tt_agg_small" Rows="1.000000" EmptyRelation="false"/>

@@ -236,14 +236,14 @@ SELECT * FROM s i1, t t2 where t2.c2 = i1.c2 and t2.c1 > 10;
       <dxl:ColumnStatistics Mdid="1.32553318.1.1.8" Name="xmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.32553318.1.1.1" Name="c2" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.25.1.0" IsNull="false" Value="AAAAB2FiYw==" LintValue="578839396"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.25.1.0" IsNull="false" Value="AAAAB2FiYw==" LintValue="578839396"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.25.1.0" Value="AAAAB2FiYw==" LintValue="578839396"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.25.1.0" Value="AAAAB2FiYw==" LintValue="578839396"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:ColumnStatistics Mdid="1.32553318.1.1.0" Name="c1" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
         <dxl:StatsBucket Frequency="1.000000" DistinctValues="1.000000">
-          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
-          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
+          <dxl:LowerBound Closed="true" TypeMdid="0.23.1.0" Value="10"/>
+          <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="10"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:Type Mdid="0.26.1.0" Name="oid" IsRedistributable="true" IsHashable="true" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
