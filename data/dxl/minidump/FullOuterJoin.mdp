@@ -559,7 +559,7 @@
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="62" Alias="t3">
-                      <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                      <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
                     </dxl:ProjElem>
                     <dxl:ProjElem ColId="51" Alias="s2">
                       <dxl:Ident ColId="51" ColName="s2" TypeMdid="0.23.1.0"/>

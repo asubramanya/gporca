@@ -177,7 +177,7 @@ select * from foo a full join foo b on false;
             </dxl:Columns>
           </dxl:TableDescriptor>
         </dxl:LogicalGet>
-        <dxl:ConstValue TypeMdid="0.16.1.0" IsNull="false" IsByValue="true" Value="false"/>
+        <dxl:ConstValue TypeMdid="0.16.1.0" IsNull="false" Value="false"/>
       </dxl:LogicalJoin>
     </dxl:Query>
     <dxl:Plan Id="0" SpaceSize="36">

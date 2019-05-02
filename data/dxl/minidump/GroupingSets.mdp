@@ -204,7 +204,7 @@
           <dxl:LogicalProject>
             <dxl:ProjList>
               <dxl:ProjElem ColId="17" Alias="a">
-                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:LogicalGroupBy>
@@ -222,7 +222,7 @@
           <dxl:LogicalProject>
             <dxl:ProjList>
               <dxl:ProjElem ColId="13" Alias="?column?">
-                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:LogicalGroupBy>
@@ -327,7 +327,7 @@
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="19" Alias="a">
-                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
               </dxl:ProjElem>
               <dxl:ProjElem ColId="18" Alias="count">
                 <dxl:Ident ColId="18" ColName="count" TypeMdid="0.20.1.0"/>

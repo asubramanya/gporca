@@ -228,7 +228,7 @@ select * from foo, (select NULL a from bar) other where foo.a is not distinct fr
         <dxl:LogicalProject>
           <dxl:ProjList>
             <dxl:ProjElem ColId="19" Alias="a">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:LogicalGet>
@@ -356,7 +356,7 @@ select * from foo, (select NULL a from bar) other where foo.a is not distinct fr
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="18" Alias="a">
-                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
                   </dxl:ProjElem>
                 </dxl:ProjList>
                 <dxl:Filter/>

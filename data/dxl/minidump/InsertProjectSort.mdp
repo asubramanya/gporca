@@ -255,16 +255,16 @@ explain insert into tbl_cds_buysell_orders_new (a,b,c)
         <dxl:LogicalProject>
           <dxl:ProjList>
             <dxl:ProjElem ColId="21" Alias="d">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="22" Alias="e">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="23" Alias="f">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="24" Alias="g">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:LogicalLimit TopLimitUnderDML="true">
@@ -351,19 +351,19 @@ explain insert into tbl_cds_buysell_orders_new (a,b,c)
               <dxl:Ident ColId="2" ColName="c" TypeMdid="0.23.1.0"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="10" Alias="d">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="11" Alias="e">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="12" Alias="f">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="13" Alias="g">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="14" Alias="ColRef_0014">
-              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="1"/>
+              <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="1"/>
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:Filter/>

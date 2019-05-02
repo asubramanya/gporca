@@ -2896,9 +2896,7 @@ CDXLOperatorFactory::GetDatumVal
 
 	// get the type id from string
 	BOOL is_const_null = ExtractConvertAttrValueToBool(dxl_memory_manager, attrs, EdxltokenIsNull, target_elem);
-	BOOL is_const_by_val = ExtractConvertAttrValueToBool(dxl_memory_manager, attrs, EdxltokenIsByValue, target_elem);
 
-	
 	SDXLDatumFactoryElem translators_mapping[] =
 	{
 		// native support
@@ -2948,11 +2946,11 @@ CDXLOperatorFactory::GetDatumVal
 	if (NULL == func)
 	{
 		// generate a datum of generic type
-		return GetDatumGeneric(dxl_memory_manager, attrs, target_elem, mdid, is_const_null, is_const_by_val);
+		return GetDatumGeneric(dxl_memory_manager, attrs, target_elem, mdid, is_const_null);
 	}
 	else
 	{
-		return (*func)(dxl_memory_manager, attrs, target_elem, mdid, is_const_null, is_const_by_val);
+		return (*func)(dxl_memory_manager, attrs, target_elem, mdid, is_const_null);
 	}
 }
 
@@ -2971,17 +2969,12 @@ CDXLOperatorFactory::GetDatumOid
  const Attributes &attrs,
  Edxltoken target_elem,
  IMDId *mdid,
- BOOL is_const_null ,
- BOOL
-#ifdef GPOS_DEBUG
- is_const_by_val
-#endif // GPOS_DEBUG
+ BOOL is_const_null
  )
 {
 	// get the memory pool from the memory manager
 	IMemoryPool *mp = dxl_memory_manager->Pmp();
 
-	GPOS_ASSERT(is_const_by_val);
 	OID val = 0;
 	if (!is_const_null)
 	{
@@ -3006,17 +2999,12 @@ CDXLOperatorFactory::GetDatumInt2
 	const Attributes &attrs,
 	Edxltoken target_elem,
 	IMDId *mdid,
-	BOOL is_const_null ,
-	BOOL
-	#ifdef GPOS_DEBUG
-	is_const_by_val
-	#endif // GPOS_DEBUG
+	BOOL is_const_null
  )
 {
 	// get the memory pool from the memory manager
 	IMemoryPool *mp = dxl_memory_manager->Pmp();
 
-	GPOS_ASSERT(is_const_by_val);
 	SINT val = 0;
 	if (!is_const_null)
 	{
@@ -3041,17 +3029,12 @@ CDXLOperatorFactory::GetDatumInt4
  const Attributes &attrs,
  Edxltoken target_elem,
  IMDId *mdid,
- BOOL is_const_null ,
- BOOL
-#ifdef GPOS_DEBUG
- is_const_by_val
-#endif // GPOS_DEBUG
+ BOOL is_const_null
  )
 {
 	// get the memory pool from the memory manager
 	IMemoryPool *mp = dxl_memory_manager->Pmp();
 	
-	GPOS_ASSERT(is_const_by_val);
 	INT val = 0;
 	if (!is_const_null)
 	{
@@ -3076,17 +3059,12 @@ CDXLOperatorFactory::GetDatumInt8
  const Attributes &attrs,
  Edxltoken target_elem,
  IMDId *mdid,
- BOOL is_const_null ,
- BOOL
-#ifdef GPOS_DEBUG
- is_const_by_val
-#endif // GPOS_DEBUG
+ BOOL is_const_null
  )
 {
 	// get the memory pool from the memory manager
 	IMemoryPool *mp = dxl_memory_manager->Pmp();
 
-	GPOS_ASSERT(is_const_by_val);
 	LINT val = 0;
 	if (!is_const_null)
 	{
@@ -3111,17 +3089,12 @@ CDXLOperatorFactory::GetDatumBool
  const Attributes &attrs,
  Edxltoken target_elem,
  IMDId *mdid,
- BOOL is_const_null ,
- BOOL
-#ifdef GPOS_DEBUG
- is_const_by_val
-#endif // GPOS_DEBUG
+ BOOL is_const_null
  )
 {
 	// get the memory pool from the memory manager
 	IMemoryPool *mp = dxl_memory_manager->Pmp();
 	
-	GPOS_ASSERT(is_const_by_val);
 	BOOL value = false;
 	if (!is_const_null)
 	{
@@ -3147,8 +3120,7 @@ CDXLOperatorFactory::GetDatumGeneric
  const Attributes &attrs,
  Edxltoken target_elem,
  IMDId *mdid,
- BOOL is_const_null ,
- BOOL is_const_by_val
+ BOOL is_const_null
  )
 {
 	// get the memory pool from the memory manager
@@ -3177,7 +3149,7 @@ CDXLOperatorFactory::GetDatumGeneric
 						default_type_modifier
 						);
 
-	return GPOS_NEW(mp) CDXLDatumGeneric(mp, mdid, type_modifier, is_const_by_val, is_const_null, data, len);
+	return GPOS_NEW(mp) CDXLDatumGeneric(mp, mdid, type_modifier, is_const_null, data, len);
 }
 
 
@@ -3196,8 +3168,7 @@ CDXLOperatorFactory::GetDatumStatsLintMappable
 	const Attributes &attrs,
 	Edxltoken target_elem,
 	IMDId *mdid,
-	BOOL is_const_null ,
-	BOOL is_const_by_val
+	BOOL is_const_null
 	)
 {
 	// get the memory pool from the memory manager
@@ -3223,7 +3194,7 @@ CDXLOperatorFactory::GetDatumStatsLintMappable
 													 -1 /* default_val value */
 						);
 
-	return GPOS_NEW(mp) CDXLDatumStatsLintMappable(mp, mdid, type_modifier, is_const_by_val, is_const_null, data, len, value);
+	return GPOS_NEW(mp) CDXLDatumStatsLintMappable(mp, mdid, type_modifier, is_const_null, data, len, value);
 }
 
 //---------------------------------------------------------------------------
@@ -3290,8 +3261,7 @@ CDXLOperatorFactory::GetDatumStatsDoubleMappable
 	const Attributes &attrs,
 	Edxltoken target_elem,
 	IMDId *mdid,
-	BOOL is_const_null ,
-	BOOL is_const_by_val
+	BOOL is_const_null
 	)
 {
 	// get the memory pool from the memory manager
@@ -3322,7 +3292,7 @@ CDXLOperatorFactory::GetDatumStatsDoubleMappable
 						true,
 													 -1 /* default_val value */
 						);
-	return GPOS_NEW(mp) CDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_const_by_val, is_const_null, data, len, value);
+	return GPOS_NEW(mp) CDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_const_null, data, len, value);
 }
 
 //---------------------------------------------------------------------------

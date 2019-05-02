@@ -506,7 +506,7 @@
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="48" Alias="a">
-                      <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                      <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
                     </dxl:ProjElem>
                     <dxl:ProjElem ColId="40" Alias="a">
                       <dxl:Ident ColId="40" ColName="a" TypeMdid="0.23.1.0"/>

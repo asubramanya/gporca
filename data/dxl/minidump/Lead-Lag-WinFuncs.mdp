@@ -179,10 +179,10 @@
             </dxl:SortingColumnList>
             <dxl:WindowFrame FrameSpec="Row" ExclusionStrategy="None">
               <dxl:TrailingEdge TrailingBoundary="BoundedFollowing">
-                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
               </dxl:TrailingEdge>
               <dxl:LeadingEdge LeadingBoundary="BoundedFollowing">
-                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
               </dxl:LeadingEdge>
             </dxl:WindowFrame>
           </dxl:WindowSpec>
@@ -192,10 +192,10 @@
             </dxl:SortingColumnList>
             <dxl:WindowFrame FrameSpec="Row" ExclusionStrategy="None">
               <dxl:TrailingEdge TrailingBoundary="BoundedPreceding">
-                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
               </dxl:TrailingEdge>
               <dxl:LeadingEdge LeadingBoundary="BoundedPreceding">
-                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
               </dxl:LeadingEdge>
             </dxl:WindowFrame>
           </dxl:WindowSpec>
@@ -338,10 +338,10 @@
                 </dxl:SortingColumnList>
                 <dxl:WindowFrame FrameSpec="Row" ExclusionStrategy="None">
                   <dxl:TrailingEdge TrailingBoundary="BoundedFollowing">
-                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
                   </dxl:TrailingEdge>
                   <dxl:LeadingEdge LeadingBoundary="BoundedFollowing">
-                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
                   </dxl:LeadingEdge>
                 </dxl:WindowFrame>
               </dxl:WindowKey>
@@ -354,10 +354,10 @@
               </dxl:SortingColumnList>
               <dxl:WindowFrame FrameSpec="Row" ExclusionStrategy="None">
                 <dxl:TrailingEdge TrailingBoundary="BoundedPreceding">
-                  <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                  <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
                 </dxl:TrailingEdge>
                 <dxl:LeadingEdge LeadingBoundary="BoundedPreceding">
-                  <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" IsByValue="true" Value="10"/>
+                  <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="false" Value="10"/>
                 </dxl:LeadingEdge>
               </dxl:WindowFrame>
             </dxl:WindowKey>

@@ -4272,15 +4272,15 @@ CTestUtils::CreateGenericDatum
 	CDXLDatumGeneric *dxl_datum = NULL;
 	if (CMDTypeGenericGPDB::IsTimeRelatedType(mdid_type))
 	{
-		dxl_datum = GPOS_NEW(mp) CDXLDatumStatsDoubleMappable(mp, mdid_type, default_type_modifier, pmdtype->IsPassedByValue() /*is_const_by_val*/, false /*is_const_null*/, data, ulbaSize, CDouble(value));
+		dxl_datum = GPOS_NEW(mp) CDXLDatumStatsDoubleMappable(mp, mdid_type, default_type_modifier, false /*is_const_null*/, data, ulbaSize, CDouble(value));
 	}
 	else if (mdid_type->Equals(&CMDIdGPDB::m_mdid_bpchar) || mdid_type->Equals(&CMDIdGPDB::m_mdid_text))
 	{
-		dxl_datum = GPOS_NEW(mp) CDXLDatumStatsLintMappable(mp, mdid_type, default_type_modifier, pmdtype->IsPassedByValue() /*is_const_by_val*/, false /*is_const_null*/, data, ulbaSize, value);
+		dxl_datum = GPOS_NEW(mp) CDXLDatumStatsLintMappable(mp, mdid_type, default_type_modifier, false /*is_const_null*/, data, ulbaSize, value);
 	}
 	else
 	{
-		dxl_datum = GPOS_NEW(mp) CDXLDatumGeneric(mp, mdid_type, default_type_modifier, pmdtype->IsPassedByValue() /*is_const_by_val*/, false /*is_const_null*/, data, ulbaSize);
+		dxl_datum = GPOS_NEW(mp) CDXLDatumGeneric(mp, mdid_type, default_type_modifier, false /*is_const_null*/, data, ulbaSize);
 	}
 
 	IDatum *datum = pmdtype->GetDatumForDXLDatum(mp, dxl_datum);
