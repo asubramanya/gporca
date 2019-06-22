@@ -2140,6 +2140,11 @@ CExpressionPreprocessor::ConvertInToSimpleExists
 		pexprRight->AddRef();
 		pexprSubqOfExists = (*pexprRelational)[0];
 	}
+	else if (COperator::EopLogicalGbAgg == pexprRelational->Pop()->Eopid())
+	{
+		pexprRight = CUtils::PexprScalarIdent(mp, CScalarSubqueryAny::PopConvert(pop)->Pcr());
+		pexprSubqOfExists = (*pexprRelational)[0];
+	}
 	else
 	{
 		pexprRight = CUtils::PexprScalarIdent(mp, CScalarSubqueryAny::PopConvert(pop)->Pcr());
