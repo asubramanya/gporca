@@ -481,6 +481,7 @@ CExpressionPreprocessor::PexprRemoveSuperfluousOuterRefs
 	COperator *pop = pexpr->Pop();
 	COperator::EOperatorId op_id = pop->Eopid();
 	BOOL fHasOuterRefs = (pop->FLogical() && CUtils::HasOuterRefs(pexpr));
+	CExpression *newExpr = pexpr;
 
 	pop->AddRef();
 	if (fHasOuterRefs)
@@ -531,6 +532,57 @@ CExpressionPreprocessor::PexprRemoveSuperfluousOuterRefs
 			// -- constant for each invocation of subquery
 			// select a from t where c in (select count(s.j) from s group by s.i, t.b)
 			//
+			CColRefArray *grouping_cols = popAgg->Pdrgpcr();
+			if (0 == colref_array->Size() && 0 < grouping_cols->Size() && 0 == pExprProjList->Arity())
+			{
+				CExpression *child = (*pexpr)[0];
+				CExpressionArray *grouping_cols_arr = GPOS_NEW(mp) CExpressionArray(mp);
+				for (ULONG ul = 0; ul < grouping_cols->Size(); ++ul)
+				{
+					grouping_cols_arr->Append(CUtils::PexprScalarIdent(mp, (*grouping_cols)[ul]));
+				}
+				CExpression *projectExpr = CUtils::PexprAddProjection(mp, child, grouping_cols_arr, false);
+				child->AddRef();
+				grouping_cols_arr->Release();
+				CExpressionArray *new_children = GPOS_NEW(mp) CExpressionArray(mp);
+				new_children->Append(projectExpr);
+				for (ULONG ul = 1; ul < pexpr->PdrgPexpr()->Size(); ul++)
+				{
+					new_children->Append((*pexpr->PdrgPexpr())[ul]);
+					(*pexpr->PdrgPexpr())[ul]->AddRef();
+				}
+				CColRefArray *new_grouping_cols = GPOS_NEW(mp) CColRefArray(mp);
+				CExpression *new_projected_cols = (*projectExpr)[1];
+				for (ULONG ul = 0; ul < new_projected_cols->Arity(); ul++)
+				{
+					new_grouping_cols->Append(CUtils::PcrFromProjElem((*new_projected_cols)[ul]));
+				}
+				if (NULL != popAgg->PdrgpcrMinimal())
+				{
+					popAgg->PdrgpcrMinimal()->AddRef();
+				}
+				if (NULL != popAgg->PdrgpcrArgDQA())
+				{
+					popAgg->PdrgpcrArgDQA()->AddRef();
+				}
+				pop = GPOS_NEW(mp) CLogicalGbAgg
+				(
+				 mp,
+				 new_grouping_cols,
+				 popAgg->PdrgpcrMinimal(),
+				 popAgg->Egbaggtype(),
+				 popAgg->FGeneratesDuplicates(),
+				 popAgg->PdrgpcrArgDQA()
+				 );
+				popAgg->Release();
+				popAgg = NULL;
+				pop->AddRef();
+				newExpr = GPOS_NEW(mp) CExpression(
+													mp,
+													pop,
+													new_children
+													);
+			}
 			if (0 < pExprProjList->Arity() || 0 < colref_array->Size())
 			{
 				CColRefArray *pdrgpcrMinimal = popAgg->PdrgpcrMinimal();
@@ -564,9 +616,9 @@ CExpressionPreprocessor::PexprRemoveSuperfluousOuterRefs
 		}
 		else if (COperator::EopLogicalSequenceProject == op_id)
 		{
-			(void) pexpr->PdpDerive();
+			(void) newExpr->PdpDerive();
 			CExpressionHandle exprhdl(mp);
-			exprhdl.Attach(pexpr);
+			exprhdl.Attach(newExpr);
 			exprhdl.DeriveProps(NULL /*pdpctxt*/);
 			CLogicalSequenceProject *popSequenceProject = CLogicalSequenceProject::PopConvert(pop);
 			if (popSequenceProject->FHasLocalOuterRefs(exprhdl))
@@ -579,14 +631,18 @@ CExpressionPreprocessor::PexprRemoveSuperfluousOuterRefs
 	}
 
 	// recursively process children
-	const ULONG arity = pexpr->Arity();
+	const ULONG arity = newExpr->Arity();
 	CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
 	for (ULONG ul = 0; ul < arity; ul++)
 	{
-		CExpression *pexprChild = PexprRemoveSuperfluousOuterRefs(mp, (*pexpr)[ul]);
+		CExpression *pexprChild = PexprRemoveSuperfluousOuterRefs(mp, (*newExpr)[ul]);
 		pdrgpexprChildren->Append(pexprChild);
 	}
 
+	if (pexpr != newExpr)
+	{
+		newExpr->Release();
+	}
 	return GPOS_NEW(mp) CExpression(mp, pop, pdrgpexprChildren);
 }
 
@@ -2138,11 +2194,6 @@ CExpressionPreprocessor::ConvertInToSimpleExists
 	{
 		pexprRight = CUtils::PNthProjectElementExpr(pexprRelational, 0);
 		pexprRight->AddRef();
-		pexprSubqOfExists = (*pexprRelational)[0];
-	}
-	else if (COperator::EopLogicalGbAgg == pexprRelational->Pop()->Eopid())
-	{
-		pexprRight = CUtils::PexprScalarIdent(mp, CScalarSubqueryAny::PopConvert(pop)->Pcr());
 		pexprSubqOfExists = (*pexprRelational)[0];
 	}
 	else
