@@ -15,6 +15,7 @@
 #include "naucrates/md/CGPDBTypeHelper.h"
 
 #include "naucrates/base/CDatumGenericGPDB.h"
+#include "naucrates/statistics/CStatsPredUtils.h"
 
 #include "naucrates/dxl/operators/CDXLScalarConstValue.h"
 #include "naucrates/dxl/operators/CDXLDatumStatsDoubleMappable.h"
@@ -500,7 +501,6 @@ CMDTypeGenericGPDB::CreateDXLDatumStatsIntMappable
 	CDouble // double_value
 	)
 {
-	GPOS_ASSERT(CMDTypeGenericGPDB::HasByte2IntMapping(mdid));
 	return GPOS_NEW(mp) CDXLDatumStatsLintMappable(mp, mdid, type_modifier, is_null, byte_array, length, lint_value);
 }
 
@@ -556,12 +556,11 @@ CMDTypeGenericGPDB::GetDXLDatumNull
 BOOL
 CMDTypeGenericGPDB::HasByte2IntMapping
 	(
-	const IMDId *mdid
+	const IMDType *mdtype
 	)
 {
-	return mdid->Equals(&CMDIdGPDB::m_mdid_bpchar)
-			|| mdid->Equals(&CMDIdGPDB::m_mdid_varchar)
-			|| mdid->Equals(&CMDIdGPDB::m_mdid_text)
+	IMDId *mdid = mdtype->MDId();
+	return mdtype->IsTextRelated()
 			|| mdid->Equals(&CMDIdGPDB::m_mdid_uuid)
 			|| mdid->Equals(&CMDIdGPDB::m_mdid_cash);
 }

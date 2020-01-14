@@ -355,7 +355,7 @@ namespace gpmd
 
 			// does a datum of this type need bytea to Lint mapping for statistics computation
 			static
-			BOOL HasByte2IntMapping(const IMDId *mdid);
+			BOOL HasByte2IntMapping(const IMDType *mdtype);
 
 			// does a datum of this type need bytea to double mapping for statistics computation
 			static
