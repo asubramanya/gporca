@@ -119,6 +119,8 @@ namespace gpmd
 			// is type composite
 			BOOL m_is_composite_type;
 
+			BOOL m_is_text_related_type;
+
 			// id of the relation corresponding to a composite type
 			IMDId *m_mdid_base_relation;
 
@@ -160,6 +162,7 @@ namespace gpmd
 				BOOL is_hashable,
 				BOOL is_merge_joinable,
 				BOOL is_composite_type,
+				BOOL is_text_related_type,
 				IMDId *mdid_base_relation,
 				IMDId *mdid_type_array,
 				INT gpdb_length
@@ -232,6 +235,12 @@ namespace gpmd
 			BOOL IsHashable() const
 			{
 				return m_is_hashable;
+			}
+
+			virtual
+			BOOL IsTextRelated() const
+			{
+				return m_is_text_related_type;
 			}
 
 			// is type merge joinable on '='
