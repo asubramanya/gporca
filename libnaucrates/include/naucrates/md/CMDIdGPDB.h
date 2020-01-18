@@ -225,6 +225,10 @@ namespace gpmd
 			static
 			CMDIdGPDB m_mdid_text;
 
+			// name mdid
+			static
+			CMDIdGPDB m_mdid_name;
+
 			// float4 mdid
 			static
 			CMDIdGPDB m_mdid_float4;

@@ -74,6 +74,9 @@ CMDIdGPDB CMDIdGPDB::m_mdid_varchar(GPDB_VARCHAR);
 // text mdid
 CMDIdGPDB CMDIdGPDB::m_mdid_text(GPDB_TEXT);
 
+// text mdid
+CMDIdGPDB CMDIdGPDB::m_mdid_name(GPDB_NAME);
+
 // float4 mdid
 CMDIdGPDB CMDIdGPDB::m_mdid_float4(GPDB_FLOAT4);
 
