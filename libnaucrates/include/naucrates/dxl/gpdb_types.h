@@ -47,6 +47,7 @@ typedef ULONG OID;
 #define GPDB_VARCHAR OID(1043)
 #define GPDB_TEXT OID(25)
 #define GPDB_NAME OID(19)
+#define GPDB_SINGLE_CHAR OID(18)
 
 // network related types
 #define GPDB_INET OID(869)
