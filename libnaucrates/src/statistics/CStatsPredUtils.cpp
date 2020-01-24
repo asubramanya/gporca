@@ -297,8 +297,8 @@ CStatsPredUtils::GetPredStats
 	IDatum *datum = scalar_const_op->GetDatum();
 	const IMDType *datum_type = md_accessor->RetrieveType(datum->MDId());
 
-	BOOL is_text_related_type = datum_type->IsTextRelated() && col_ref->RetrieveType()->IsTextRelated();
-	if (is_text_related_type && !CHistogram::IsOpSupportedForTextFilter(stats_cmp_type))
+	BOOL is_text_related = datum_type->IsTextRelated() && col_ref->RetrieveType()->IsTextRelated();
+	if (is_text_related && !CHistogram::IsOpSupportedForTextFilter(stats_cmp_type))
 	{
 		return GPOS_NEW(mp) CStatsPredUnsupported(col_ref->Id(), stats_cmp_type);
 	}

@@ -69,7 +69,7 @@ CMDTypeGenericGPDB::CMDTypeGenericGPDB
 	BOOL is_hashable,
 	BOOL is_merge_joinable,
 	BOOL is_composite_type,
-	BOOL is_text_related_type,
+	BOOL is_text_related,
 	IMDId *mdid_base_relation,
 	IMDId *mdid_type_array,
 	INT gpdb_length
@@ -97,7 +97,7 @@ CMDTypeGenericGPDB::CMDTypeGenericGPDB
 	m_is_hashable(is_hashable),
 	m_is_merge_joinable(is_merge_joinable),
 	m_is_composite_type(is_composite_type),
-	m_is_text_related_type(is_text_related_type),
+	m_is_text_related(is_text_related),
 	m_mdid_base_relation(mdid_base_relation),
 	m_mdid_type_array(mdid_type_array),
 	m_gpdb_length(gpdb_length),

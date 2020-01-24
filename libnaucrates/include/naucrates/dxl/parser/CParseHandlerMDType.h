@@ -108,8 +108,8 @@ namespace gpdxl
 			// is type composite
 			BOOL m_is_composite;
 
-			// is type composite
-			BOOL m_is_text_related_type;
+			// is type text related
+			BOOL m_is_text_related;
 
 			// id of the relation corresponding to a composite type
 			IMDId *m_mdid_base_rel;
