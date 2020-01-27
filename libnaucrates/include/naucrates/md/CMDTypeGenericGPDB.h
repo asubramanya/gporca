@@ -319,6 +319,7 @@ namespace gpmd
 						IMDId *mdid,
 						INT type_modifier,
 						BOOL is_null,
+						BOOL is_text_related,
 						BYTE *byte_array,
 						ULONG length,
 						LINT lint_Value,
@@ -355,7 +356,7 @@ namespace gpmd
 
 			// does a datum of this type need bytea to Lint mapping for statistics computation
 			static
-			BOOL HasByte2IntMapping(const IMDType *mdtype);
+			BOOL HasByte2IntMapping(const IMDId *mdid);
 
 			// does a datum of this type need bytea to double mapping for statistics computation
 			static

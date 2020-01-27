@@ -324,7 +324,7 @@ CDatumGenericGPDB::IsDatumMappableToLINT() const
 {
 	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 	const IMDType *type = md_accessor->RetrieveType(MDId());
-	return CMDTypeGenericGPDB::HasByte2IntMapping(type);
+	return type->IsTextRelated() || CMDTypeGenericGPDB::HasByte2IntMapping(MDId());
 
 }
 

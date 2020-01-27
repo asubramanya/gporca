@@ -372,7 +372,7 @@ CMDTypeGenericGPDB::GetDatumVal
 		dValue = datum_generic->GetDoubleMapping();
 	}
 
-	return CreateDXLDatumVal(mp, m_mdid, datum_generic->TypeModifier(), datum_generic->IsNull(), pba, length, lValue, dValue);
+	return CreateDXLDatumVal(mp, m_mdid, datum_generic->TypeModifier(), datum_generic->IsNull(), IsTextRelated(), pba, length, lValue, dValue);
 }
 
 //---------------------------------------------------------------------------
@@ -409,6 +409,7 @@ CMDTypeGenericGPDB::CreateDXLDatumVal
 	IMDId *mdid,
 	INT type_modifier,
 	BOOL is_null,
+	BOOL is_text_related,
 	BYTE *pba,
 	ULONG length,
 	LINT lValue,
@@ -417,40 +418,52 @@ CMDTypeGenericGPDB::CreateDXLDatumVal
 {
 	GPOS_ASSERT(IMDId::EmdidGPDB == mdid->MdidType());
 
-	const CMDIdGPDB * const pmdidGPDB = CMDIdGPDB::CastMdid(mdid);
-	switch (pmdidGPDB->Oid())
+	if (HasByte2DoubleMapping(mdid))
 	{
-		// numbers
-		case GPDB_NUMERIC:
-		case GPDB_FLOAT4:
-		case GPDB_FLOAT8:
-			return CMDTypeGenericGPDB::CreateDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
-		// has lint mapping
-		case GPDB_CHAR:
-		case GPDB_VARCHAR:
-		case GPDB_TEXT:
-		case GPDB_CASH:
-		case GPDB_UUID:
-			return CMDTypeGenericGPDB::CreateDXLDatumStatsIntMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
-		// time-related types
-		case GPDB_DATE:
-		case GPDB_TIME:
-		case GPDB_TIMETZ:
-		case GPDB_TIMESTAMP:
-		case GPDB_TIMESTAMPTZ:
-		case GPDB_ABSTIME:
-		case GPDB_RELTIME:
-		case GPDB_INTERVAL:
-		case GPDB_TIMEINTERVAL:
-			return CMDTypeGenericGPDB::CreateDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
-		// network-related types
-		case GPDB_INET:
-		case GPDB_CIDR:
-		case GPDB_MACADDR:
-			return CMDTypeGenericGPDB::CreateDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
-		default:
-			return GPOS_NEW(mp) CDXLDatumGeneric(mp, mdid, type_modifier, is_null, pba, length);
+		return CMDTypeGenericGPDB::CreateDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
 	}
+
+	if (is_text_related || HasByte2IntMapping(mdid))
+	{
+		return CMDTypeGenericGPDB::CreateDXLDatumStatsIntMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
+	}
+
+	return GPOS_NEW(mp) CDXLDatumGeneric(mp, mdid, type_modifier, is_null, pba, length);
+
+//	const CMDIdGPDB * const pmdidGPDB = CMDIdGPDB::CastMdid(mdid);
+//	switch (pmdidGPDB->Oid())
+//	{
+//		// numbers
+//		case GPDB_NUMERIC:
+//		case GPDB_FLOAT4:
+//		case GPDB_FLOAT8:
+//			return CMDTypeGenericGPDB::CreateDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
+//		// has lint mapping
+//		case GPDB_CHAR:
+//		case GPDB_VARCHAR:
+//		case GPDB_TEXT:
+//		case GPDB_CASH:
+//		case GPDB_UUID:
+//			return CMDTypeGenericGPDB::CreateDXLDatumStatsIntMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
+//		// time-related types
+//		case GPDB_DATE:
+//		case GPDB_TIME:
+//		case GPDB_TIMETZ:
+//		case GPDB_TIMESTAMP:
+//		case GPDB_TIMESTAMPTZ:
+//		case GPDB_ABSTIME:
+//		case GPDB_RELTIME:
+//		case GPDB_INTERVAL:
+//		case GPDB_TIMEINTERVAL:
+//			return CMDTypeGenericGPDB::CreateDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
+//		// network-related types
+//		case GPDB_INET:
+//		case GPDB_CIDR:
+//		case GPDB_MACADDR:
+//			return CMDTypeGenericGPDB::CreateDXLDatumStatsDoubleMappable(mp, mdid, type_modifier, is_null, pba, length, lValue, dValue);
+//		default:
+//			return GPOS_NEW(mp) CDXLDatumGeneric(mp, mdid, type_modifier, is_null, pba, length);
+//	}
 }
 
 
@@ -542,7 +555,7 @@ CMDTypeGenericGPDB::GetDXLDatumNull
 {
 	m_mdid->AddRef();
 
-	return CreateDXLDatumVal(mp, m_mdid, default_type_modifier, true /*fConstNull*/, NULL /*byte_array*/, 0 /*length*/, 0 /*lint_value */, 0 /*double_value */);
+	return CreateDXLDatumVal(mp, m_mdid, default_type_modifier, true /*fConstNull*/, IsTextRelated(), NULL /*byte_array*/, 0 /*length*/, 0 /*lint_value */, 0 /*double_value */);
 }
 
 //---------------------------------------------------------------------------
@@ -556,11 +569,12 @@ CMDTypeGenericGPDB::GetDXLDatumNull
 BOOL
 CMDTypeGenericGPDB::HasByte2IntMapping
 	(
-	const IMDType *mdtype
+	const IMDId *mdid
 	)
 {
-	IMDId *mdid = mdtype->MDId();
-	return mdtype->IsTextRelated()
+	return 	mdid->Equals(&CMDIdGPDB::m_mdid_varchar)
+			|| mdid->Equals(&CMDIdGPDB::m_mdid_text)
+			|| mdid->Equals(&CMDIdGPDB::m_mdid_bpchar)
 			|| mdid->Equals(&CMDIdGPDB::m_mdid_uuid)
 			|| mdid->Equals(&CMDIdGPDB::m_mdid_cash);
 }
