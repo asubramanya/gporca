@@ -318,6 +318,7 @@ namespace gpmd
 						(
 						CMemoryPool *mp,
 						IMDId *mdid,
+						const IMDType *md_type,
 						INT type_modifier,
 						BOOL is_null,
 						BYTE *byte_array,

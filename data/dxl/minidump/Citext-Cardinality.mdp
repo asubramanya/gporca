@@ -1038,7 +1038,7 @@
           <dxl:Filter>
             <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.16410.1.0">
               <dxl:Ident ColId="1" ColName="b" TypeMdid="0.16386.1.0"/>
-              <dxl:ConstValue TypeMdid="0.16386.1.0" Value="AAAABTE="/>
+              <dxl:ConstValue TypeMdid="0.16386.1.0" Value="AAAABTE=" LintValue="0"/>
             </dxl:Comparison>
           </dxl:Filter>
           <dxl:TableDescriptor Mdid="0.16469.1.0" TableName="foo">
